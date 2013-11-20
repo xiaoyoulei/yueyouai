@@ -1,5 +1,7 @@
-import tornado.web , tornado.ioloop ,  sys
-sys.path.append("./db")
+import tornado.web , tornado.ioloop ,  sys , os
+#the file path , not run path
+filePath = os.path.split(os.path.realpath(__file__))[0]
+sys.path.append(filePath+"/../db")
 import utils
 
 
