@@ -14,10 +14,11 @@ create table TblUser
     `birthTime` TIMESTAMP DEFAULT '0000-00-00 00:00:00' COMMENT 'birth day time',
     `togetherTime` TIMESTAMP DEFAULT '0000-00-00 00:00:00' COMMENT 'has a girl/boy friend',
     `marryTime` TIMESTAMP DEFAULT '0000-00-00 00:00:00' COMMENT "marry time",
+	`auth`	tinyint(8) NOT NULL DEFAULT 1 COMMENT "1 only look,2 write some thing",
     `registerTime`  TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'register time',
     `lastLoginTime` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'last login time' ,
     PRIMARY KEY (uid),
-    KEY K_email(email(64)),
-    KEY K_phoneNum(phoneNum(11))
+    UNIQUE KEY `UK_email`(email),
+    UNIQUE KEY `UK_phoneNum`(phoneNum)
 )
 ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT 'user info';

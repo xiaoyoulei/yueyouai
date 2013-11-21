@@ -27,7 +27,7 @@ if __name__ == "__main__":
 			[
 				(r"/login" , UserLoginHandler),
 				])
-	application.listen(sys.argv[1])
+	application.listen(int(sys.argv[1]))
 	tornado.ioloop.IOLoop.instance().start()
 
 
