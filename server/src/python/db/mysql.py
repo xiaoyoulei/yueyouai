@@ -4,6 +4,8 @@ import os
 import time 
 filePath = os.path.split(os.path.realpath(__file__))[0]
 sys.path.append(filePath+"/../config")
+sys.path.append(filePath+"/../common")
+import log
 import myConfig
 import MySQLdb
 from DBUtils.PooledDB import PooledDB
@@ -30,6 +32,10 @@ def get_now_time():
 
 def get_mysql_value_string(content):
 	return "'"+MySQLdb.escape_string(content)+"'"
+
+def MyExecute(cursor,mysqlStr):
+	log.logger.info(mysqlStr)
+	return cursor.execute(mysqlStr)
 
 def testDB():
 	conn = g_pool.connection()

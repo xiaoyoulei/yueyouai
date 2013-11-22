@@ -1,0 +1,6 @@
+[2013-11-22 10:24:00,765][ERROR] UserDAO.py:[<module>]:32 (YYA) : [test error]
+[2013-11-22 10:24:00,766][INFO] mysql.py:[MyExecute]:37 (YYA) : [SELECT * FROM TblUser WHERE email='zhuli102232@163.com']
+[2013-11-22 10:24:00,767][WARNING] UserDAO.py:[AddUser]:19 (YYA) : [email:[zhuli102232@163.com] already exist!]
+[2013-11-22 10:24:00,767][INFO] mysql.py:[MyExecute]:37 (YYA) : [SELECT * FROM TblUser WHERE phoneNum='18301956105']
+[2013-11-22 10:24:00,767][WARNING] UserDAO.py:[AddUser]:24 (YYA) : [phoneNum:[18301956105] already exist!]
+[2013-11-22 10:24:00,768][INFO] mysql.py:[MyExecute]:37 (YYA) : [INSERT INTO TblUser(nickName,email,phoneNum,passWord,sex,single,auth,registerTime,lastLoginTime) VALUES('\'zhuli\'\'zhuli01\'','zhuli102232@163.com','18301956105','woshimima',NULL,NULL,1,'2013-11-22 10:24:00','2013-11-22 10:24:00')]

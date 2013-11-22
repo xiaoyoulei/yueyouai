@@ -78,7 +78,6 @@ class User:
 		#myqlStrend
 		mysqlStr += mysqlKes+") VALUES("+mysqlValues+")";
 		
-		print mysqlStr
 		return mysqlStr
 
 #user = User("'zhuli''zhuli01'","zhuli102232@163.com","18301956105","woshimima");
