@@ -7,30 +7,123 @@ sys.path.append(filePath+"/../../common")
 import log
 import mysql
 import User
+import returnCode
 #the function can not throw exception,if you do that ,the conn may be not set back
 class UserDAO:
+	# ------ function AddUser start ------
 	def AddUser(self,user):
-		conn = mysql.g_pool.connection()
+		ret = user.selfCheck()
+		if ret.ret != returnCode.OK:
+			return ret
+		conn = mysql.g_pool.dedicated_connection()
 		cursor = conn.cursor()
 		if len(user.email) > 0:
 			mysqlStr = "SELECT * FROM TblUser WHERE email=" + mysql.get_mysql_value_string(user.email)
-			rowcount = mysql.MyExecute(cursor,mysqlStr)
+			rowcount = mysql.MysqlExecute(cursor,mysqlStr)
 			if rowcount > 0 :
-				log.logger.warn("email:["+user.email+"] already exist!")
+				msg = "email:["+user.email+"] already exist!"
+				log.logger.warn(msg)
+				return mysql.MysqlReturn(returnCode.AlreadyExist,msg,conn,cursor)
 		if len(user.phoneNum) > 0:
 			mysqlStr = "SELECT * FROM TblUser WHERE phoneNum=" + mysql.get_mysql_value_string(user.phoneNum)
-			rowcount = mysql.MyExecute(cursor,mysqlStr)
+			rowcount = mysql.MysqlExecute(cursor,mysqlStr)
 			if rowcount > 0 :
-				log.logger.warn("phoneNum:["+user.phoneNum+"] already exist!")
+				msg = "phoneNum:["+user.phoneNum+"] already exist!"
+				log.logger.warn(msg)
+				return mysql.MysqlReturn(returnCode.AlreadyExist,msg,conn,cursor)
 		#add user
 		conn.begin()
-		mysql.MyExecute(cursor,user.saveMysqlStr())
+		mysql.MysqlExecute(cursor,user.saveMysqlStr())
+		cursor.close()
 		conn.commit()
 		#conn.rollback()
+		conn.close()
+		return returnCode.Return(returnCode.OK,"OK")
+	# ------ function AddUser end ------
+	# ------ function checkPassWord start ------
+	def checkPassWord(self,uid = -1,phoneNum="",email="",passWord=""):
+		conn = mysql.g_pool.connection()
+		cursor = conn.cursor()
+		if uid != -1:
+			mysqlStr = "SELECT passWord FROM TblUser WHERE uid="+str(uid)
+		elif len(phoneNum) != 0:
+			mysqlStr = "SELECT passWord FROM TblUser WHERE phoneNum=" + mysql.get_mysql_value_string(phoneNum)
+		else:
+			mysqlStr = "SELECT passWord FROM TblUser WHERE email=" + mysql.get_mysql_value_string(email)
+		rowcount = mysql.MysqlExecute(cursor,mysqlStr)
+		if rowcount < 1:
+			msg = "user not exist!"
+			return mysql.MysqlReturn(returnCode.NoSuchObject,msg,conn,cursor)
+		res = cursor.fetchone()
+		if res[0] != passWord :
+			msg = "passWord error"
+			return mysql.MysqlReturn(returnCode.NoSuchObject,msg,conn,cursor)
 		cursor.close()
 		conn.close()
-'''
-user = User.User("'zhuli''zhuli01'","zhuli102232@163.com","18301956105","woshimima");
+		return returnCode.Return(returnCode.OK,"OK")
+	# ------ function checkPassWord end    ------
+	# ------ function updateLastTime start ------
+	def updateLastTime(self,uid = -1,ephoneNum="",mail=""):
+		conn = mysql.g_pool.dedicated_connection()
+		cursor = conn.cursor()
+		if uid != -1:
+			mysqlStr = "UPDATE TblUser SET lastLoginTime = NOW() WHERE uid="+str(uid)
+		elif len(phoneNum) != 0:
+			mysqlStr = "UPDATE TblUser SET lastLoginTime = NOW() WHERE phoneNum=" + mysql.get_mysql_value_string(phoneNum)
+		else:
+			mysqlStr = "UPDATE TblUser SET lastLoginTime = NOW() WHERE email=" + mysql.get_mysql_value_string(email)
+		conn.begin()
+		mysql.MysqlExecute(cursor,mysqlStr)
+		cursor.close()
+		conn.commit()
+		conn.close()
+	# ------ function updateLastTime end   ------
+	# ------ function getUser start ------
+	def getUser(self,uid = -1,ephoneNum="",mail=""):
+		conn = mysql.g_pool.connection()
+		cursor = conn.cursor()
+		if uid != -1:
+			mysqlStr = "SELECT uid,nickName,email,phoneNum,sex,single,birthTime,togetherTime,marryTime,auth,registerTime,lastLoginTime FROM TblUser WHERE uid="+str(uid)
+		elif len(phoneNum) != 0:
+			mysqlStr = "SELECT uid,nickName,email,phoneNum,sex,single,birthTime,togetherTime,marryTime,auth,registerTime,lastLoginTime FROM TblUser WHERE phoneNum=" + mysql.get_mysql_value_string(phoneNum)
+		else:
+			mysqlStr = "SELECT uid,nickName,email,phoneNum,sex,single,birthTime,togetherTime,marryTime,auth,registerTime,lastLoginTime FROM TblUser WHERE email=" + mysql.get_mysql_value_string(email)
+		rowcount = mysql.MysqlExecute(cursor,mysqlStr)
+		if rowcount < 1:
+			return None
+		user = User.User()
+		res = cursor.fetchone()
+		user.uid = int(res[0])
+		user.nickName = res[1]
+		user.email = res[2]
+		user.phoneNum = res[3]
+		user.sex = res[4]
+		user.single = res[5]
+		user.birthTime = res[6]
+		user.togetherTime = res[7]
+		user.marryTime = res[8]
+		user.auth = res[9]
+		user.registerTime = res[10]
+		user.lastLoginTime = res[11]
+		cursor.close()
+		conn.close()
+		return user;
+		
+	# ------ function getUser end   ------
+'''	
+user = User.User(nickName="'zhuli''zhuli01'",phoneNum="18301956106",email="zhuli102233@163.com",passWord="woshimima");
+#user = User.User(nickName="'zhuli''zhuli01'",phoneNum="",email="",passWord="woshimima");
 userdao = UserDAO()
-userdao.AddUser(user)
+ret = userdao.AddUser(user)
+print ret.msg
+ret = userdao.checkPassWord(uid=1,passWord="woshimima")
+userdao.updateLastTime(uid=1)
+user1 = userdao.getUser(uid=1);
+import pprint 
+#pprint.pprint(data)
+print pprint.pformat(user1.phoneNum)
+'''
+'''
+print ret.ret
+print ret.msg
 '''

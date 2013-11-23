@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-import time 
 filePath = os.path.split(os.path.realpath(__file__))[0]
 sys.path.append(filePath+"/../config")
 sys.path.append(filePath+"/../common")
 import log
 import myConfig
 import MySQLdb
+import returnCode
 from DBUtils.PooledDB import PooledDB
 
 m_s_user = myConfig.yueYouAiConfig.mysql["user"]
@@ -26,16 +26,18 @@ except Exception, e:
 	msg = 'conn datasource Excepts!!!(%s).'%(str(e))
 	raise Exception,msg
 
-def get_now_time():
-	ISOTIMEFORMAT='%Y-%m-%d %X'
-	return time.strftime(ISOTIMEFORMAT, time.localtime())
 
 def get_mysql_value_string(content):
 	return "'"+MySQLdb.escape_string(content)+"'"
 
-def MyExecute(cursor,mysqlStr):
+def MysqlExecute(cursor,mysqlStr):
 	log.logger.info(mysqlStr)
 	return cursor.execute(mysqlStr)
+
+def MysqlReturn(ret,msg,conn,cursor):
+	cursor.close()
+	conn.close()
+	return returnCode.Return(ret,msg)
 
 def testDB():
 	conn = g_pool.connection()
