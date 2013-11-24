@@ -63,7 +63,7 @@ class UserDAO:
 		return returnCode.Return(returnCode.OK,"OK")
 	# ------ function checkPassWord end    ------
 	# ------ function updateLastTime start ------
-	def updateLastTime(self,uid = -1,ephoneNum="",mail=""):
+	def updateLastTime(self,uid = -1,phoneNum="",email=""):
 		conn = mysql.g_pool.dedicated_connection()
 		cursor = conn.cursor()
 		if uid != -1:
@@ -79,7 +79,7 @@ class UserDAO:
 		conn.close()
 	# ------ function updateLastTime end   ------
 	# ------ function getUser start ------
-	def getUser(self,uid = -1,ephoneNum="",mail=""):
+	def getUser(self,uid = -1,phoneNum="",email=""):
 		conn = mysql.g_pool.connection()
 		cursor = conn.cursor()
 		if uid != -1:
@@ -110,7 +110,41 @@ class UserDAO:
 		return user;
 		
 	# ------ function getUser end   ------
-'''	
+	# ------ function updateUser start ------
+	def updateUser(self,user = User.User(),uid = -1,phoneNum="",email=""):
+		conn = mysql.g_pool.dedicated_connection()
+		cursor = conn.cursor()
+		mysqlStr = user.updateMysqlStr(uid = uid,phoneNum=phoneNum,email=email);
+		if mysqlStr is None:
+			msg = "convert to mysql error"
+			return mysql.MysqlReturn(returnCode.InvalidParam,msg,conn,cursor)	
+		conn.begin()
+		mysql.MysqlExecute(cursor,mysqlStr)
+		cursor.close()
+		conn.commit()
+		conn.close()
+		return returnCode.Return(returnCode.OK,"OK")
+	# ------ function updateUser end   ------
+	# ------ function getUid start ----------
+	def getUid(self,phoneNum="",email=""):
+		if len(phoneNum) != 0:
+			mysqlStr = "SELECT uid FROM TblUser WHERE phoneNum=" + mysql.get_mysql_value_string(phoneNum)
+		else:
+			mysqlStr = "SELECT uid FROM TblUser WHERE email=" +  mysql.get_mysql_value_string(email)
+		conn = mysql.g_pool.connection()
+		cursor = conn.cursor()
+		rowcount = mysql.MysqlExecute(cursor,mysqlStr)
+		if rowcount < 1:
+			cursor.close()
+			conn.close()
+			return None
+		else:
+			res = cursor.fetchone()
+			cursor.close()
+			conn.close()
+			return int(res[0])
+	# ------ function getUid end   ----------
+'''
 user = User.User(nickName="'zhuli''zhuli01'",phoneNum="18301956106",email="zhuli102233@163.com",passWord="woshimima");
 #user = User.User(nickName="'zhuli''zhuli01'",phoneNum="",email="",passWord="woshimima");
 userdao = UserDAO()
@@ -121,6 +155,10 @@ userdao.updateLastTime(uid=1)
 user1 = userdao.getUser(uid=1);
 import pprint 
 #pprint.pprint(data)
+print pprint.pformat(user1.phoneNum)
+user2 = User.User(nickName="'zhuli''zhuli01'",phoneNum="18301956105")
+ret = userdao.updateUser(user2,uid=1);
+user1 = userdao.getUser(uid=1);
 print pprint.pformat(user1.phoneNum)
 '''
 '''

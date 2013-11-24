@@ -42,7 +42,7 @@ logging.getLogger('').addHandler(trHandler)
 console = logging.StreamHandler();
 #console.setLevel(logging.DEBUG);
 # set a format which is simpler for console use
-formatter = logging.Formatter('%(filename)s:[%(funcName)s]:%(lineno)-4d : %(levelname)-8s [%(message)s]');
+formatter = logging.Formatter('[%(asctime)s]%(filename)s:[%(funcName)s]:%(lineno)-4d : %(levelname)-8s [%(message)s]');
 # tell the handler to use this format
 console.setFormatter(formatter);
 logging.getLogger('').addHandler(console);

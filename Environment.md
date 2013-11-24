@@ -6,7 +6,7 @@ The run environment demand
 |		|---tornado
 |		|---python-mysqldb
 |		|---python-dbutils
-|
+|		|---[pycrypto]
 |
 |---app*
 	|---Android*

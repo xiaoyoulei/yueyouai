@@ -1,5 +1,7 @@
 import time
+ISOTIMEFORMAT='%Y-%m-%d %X'
 
 def get_now_time():                                                                                                            
-	ISOTIMEFORMAT='%Y-%m-%d %X'                                                                                                
-	return time.strftime(ISOTIMEFORMAT, time.localtime())   
+	return time.strftime(ISOTIMEFORMAT, time.localtime())  
+def convert_int_to_string_time(second):
+	return time.strftime(ISOTIMEFORMAT, time.localtime(float(second)))

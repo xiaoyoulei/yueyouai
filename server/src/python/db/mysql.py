@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# may be we can use Python ORM ????
 import sys
 import os
 filePath = os.path.split(os.path.realpath(__file__))[0]
