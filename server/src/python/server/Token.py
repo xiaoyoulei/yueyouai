@@ -31,7 +31,7 @@ class Token:
 		self.renewTime = renewTime
 		self.md5Str = self.md5()
 	def md5(self):
-		plain = str(self.uid) + self.pwd + str(self.expirationTime) + str(self.renewTime)
+		plain = str(self.uid) + self.pwd + str(self.expirationTime) + str(self.renewTime) + myConfig.yueYouAiConfig.AES["MD5"] 
 		m = MD5.new()
 		m.update(plain)
 		return m.hexdigest()[-8:]
@@ -57,8 +57,8 @@ class Token:
 			length = length -4;
 			self.randStr = random_str(length)
 			arr.append(self.randStr)
-		else:
-			print "need "+str(length)+"space(s) key"
+		#else:
+		#	print "need "+str(length)+"space(s) key"
 		jsonEncodeStr = json.dumps(arr)
 		#print len(jsonEncodeStr),jsonEncodeStr
 		#print arr

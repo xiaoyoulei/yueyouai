@@ -22,6 +22,7 @@ class MyConfig:
 		self.AES["key"] =  config.get("AES","key")
 		if len(self.AES["key"]) != 16 :
 			raise Exception,"AES.key must 16"
+		self.AES["MD5"] =  config.get("AES","MD5")
 		#print self.mysql
 #we can only have a global config object
 yueYouAiConfig = MyConfig();
