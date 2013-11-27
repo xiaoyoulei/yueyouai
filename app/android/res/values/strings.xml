@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Love</string>
+    <string name="hello_world">I Love You Annie !</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_item1">item1</string>
+    <string name="action_item2">item2</string>
+    <string name="action_item3">item3</string>
+    
+    <string name="toast_already_latest">已是最新內容</string>
+</resources>
