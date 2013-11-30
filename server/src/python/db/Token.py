@@ -17,21 +17,21 @@ pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
 unpad = lambda s : s[0:-ord(s[-1])]
 
 class Token:
-	uid = -1
+	nickName = ""
 	pwd = ""
 	expirationTime = int(time.time()) + 60*60
 	renewTime = 10*60
 	md5Str = ""
 	randStr = ""
 	aes = AES.new(myConfig.yueYouAiConfig.AES["key"], AES.MODE_ECB)
-	def __init__(self,uid=-1,pwd="",afterTime=60*60,renewTime=10*60):
-		self.uid = uid
+	def __init__(self,nickName="",pwd="",afterTime=60*60,renewTime=10*60):
+		self.nickName = nickName
 		self.pwd = pwd
 		self.expirationTime = int(time.time()) + afterTime
 		self.renewTime = renewTime
 		self.md5Str = self.md5()
 	def md5(self):
-		plain = str(self.uid) + self.pwd + str(self.expirationTime) + str(self.renewTime) + myConfig.yueYouAiConfig.AES["MD5"] 
+		plain = self.nickName + self.pwd + str(self.expirationTime) + str(self.renewTime) + myConfig.yueYouAiConfig.AES["MD5"] 
 		m = MD5.new()
 		m.update(plain)
 		return m.hexdigest()[-8:]
@@ -41,8 +41,8 @@ class Token:
 		self.md5Str = self.md5();
 		arr = [];
 		length = 2; #[]
-		length += len(str(self.uid)); #uid
-		arr.append(self.uid)
+		length += 2+len(self.nickName); #"nickName"
+		arr.append(self.nickName)
 		length += (4 + len(self.pwd)) #, "pwd"
 		arr.append(self.pwd)
 		length += (2 + len(str(self.expirationTime))) #, expirationTime
@@ -66,15 +66,17 @@ class Token:
 		return base64.b64encode(ciph)
 	#------function toString end -----------
 	#------function parseString start ------
-	def parseString(self,token):
-		jsonStr = unpad(self.aes.decrypt(base64.b64decode(token)))
+	def parseString(self,tokenStr):
+		jsonStr = unpad(self.aes.decrypt(base64.b64decode(tokenStr)))
 		arr = json.loads(jsonStr)
 		if isinstance(arr,list) is False:
-			return returnCode.Return(returnCode.InvalidParam,"json parse error")
+			log.logger.debug("json parse error")
+			return returnCode.TokenValue.INVALID_PARAM
 		#print arr
 		if (len(arr) != 5 ) and (len(arr) != 6):
-			return returnCode.Return(returnCode.InvalidParam,"json load arr size not 5,6")
-		self.uid = arr[0]
+			log.logger.debug("json load arr size not 5,6")
+			return returnCode.TokenValue.INVALID_PARAM
+		self.nickName = arr[0]
 		self.pwd = arr[1]
 		self.expirationTime = arr[2]
 		self.renewTime = arr[3]
@@ -83,36 +85,48 @@ class Token:
 			self.randStr = arr[5]
 		tempMd5Str = self.md5()
 		if self.md5Str != tempMd5Str:
-			return returnCode.Return(returnCode.InvalidParam,"md5 check error")
-		return returnCode.Return(returnCode.OK,"OK")
+			log.logger.debug("md5 check error")
+			return returnCode.TokenValue.INVALID_PARAM
+		return returnCode.TokenValue.OK
 	#------function parseString end   ------
 	#------function checkValid start -------
 	def checkValid(self):
 		tempMd5Str = self.md5()
 		if self.md5Str != tempMd5Str:
-			return returnCode.Return(returnCode.InvalidParam,"md5 check error")
+			log.logger.debug("md5 check error")
+			return returnCode.TokenValue.INVALID_PARAM
 		if self.expirationTime < int(time.time()):
-			return returnCode.Return(returnCode.InvalidParam,"expiration time out")
-		return returnCode.Return(returnCode.OK,"OK")
+			log.logger.debug("expiration time out")
+			return returnCode.TokenValue.TIME_OUT
+		return returnCode.TokenValue.OK
 	#------function checkValid end   -------
  	
 	#------function getNextToken start -------
 	def getNextToken(self,afterTime=60*60,renewTime=10*60):
 		tempMd5Str = self.md5()
 		if self.md5Str != tempMd5Str:
-			return returnCode.Return(returnCode.InvalidParam,"md5 check error")
+			log.logger.debug("md5 check error")
+			return None
 		if self.expirationTime + self.renewTime < int(time.time()):
-			return returnCode.Return(returnCode.InvalidParam,"expiration + renew time out")
-		token = Token(self.uid,self.pwd,afterTime,renewTime)
+			log.logger.debug("expiration + renew time out")
+			return None
+		token = Token(self.nickName,self.pwd,afterTime,renewTime)
 		return token.toString()
 	#------function getNextToken end   -------
 	#------function Debug start        -------
 	def Debug(self):
-		debugStr = "uid:["+str(self.uid)+"] pwd["+self.pwd+"] expirationTime[" ;
+		debugStr = "nickName:["+self.nickName+"] pwd["+self.pwd+"] expirationTime[" ;
 		debugStr += commonUtils.convert_int_to_string_time(self.expirationTime) ;
 		debugStr += "] renewTime[" +str(self.renewTime) +"](s) md5Str[" + self.md5Str + "] randStr["+self.randStr+"]"
 		print debugStr
 	#------function Debug end          -------
+	#------function checkToken start     -------
+	def checkToken(self,tokenStr):
+		ret = self.parseString(tokenStr)
+		if ret != returnCode.TokenValue.OK:
+			return  ret
+		return self.checkValid()
+	#------function checkoken end       -------
 	
 from random import Random
 def random_str(randomlength=8):

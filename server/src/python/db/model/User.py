@@ -6,6 +6,7 @@ sys.path.append(filePath+"/../../common")
 import commonUtils
 import returnCode
 import mysql
+import log
 class User:
 	uid = None # 
 	nickName = "yueyouai_love"
@@ -41,79 +42,83 @@ class User:
 	def saveMysqlStr(self):
 		mysqlStr ="INSERT INTO TblUser(";
 		#nickName
-		mysqlKes = "nickName";
+		mysqlKeys = "nickName";
 		mysqlValues = mysql.get_mysql_value_string(self.nickName);
 		#email
 		if (not self.email is None) and (len(self.email) > 0) :
-			mysqlKes += ",email";
+			mysqlKeys += ",email";
 			mysqlValues += ","+mysql.get_mysql_value_string(self.email);
 		#phoneNum
 		if (not self.phoneNum is None) and (len(self.phoneNum) > 0) :
-			mysqlKes += ",phoneNum";
+			mysqlKeys += ",phoneNum";
 			mysqlValues += ","+mysql.get_mysql_value_string(self.phoneNum);
 		#passWord
 		if (not self.passWord is None) and (len(self.passWord) > 0) :
-			mysqlKes += ",passWord";
+			mysqlKeys += ",passWord";
 			mysqlValues += ","+mysql.get_mysql_value_string(self.passWord);
 		#status
 		if (not self.status is None):
-			mysqlKes += ",status";
+			mysqlKeys += ",status";
 			mysqlValues += ","+str(self.status)
 		#sex
 		if (not self.sex is None) :
-			mysqlKes += ",sex";
+			mysqlKeys += ",sex";
 			mysqlValues += ","+str(self.sex);
 		#single
 		if (not self.single is None) :
-			mysqlKes += ",single";
+			mysqlKeys += ",single";
 			mysqlValues += ","+str(self.single);
 		#birthTime
 		if (not self.birthTime is None)  :
-			mysqlKes += ",birthTime";
+			mysqlKeys += ",birthTime";
 			mysqlValues += ","+mysql.get_mysql_value_string(self.birthTime);
 		#togetherTime
 		if (not self.togetherTime is None)  :
-			mysqlKes += ",togetherTime";
+			mysqlKeys += ",togetherTime";
 			mysqlValues += ","+mysql.get_mysql_value_string(self.togetherTime);
 		#marryTime
 		if (not self.marryTime is None) :
-			mysqlKes += ",marryTime";
+			mysqlKeys += ",marryTime";
 			mysqlValues += ","+mysql.get_mysql_value_string(self.marryTime);
 	    #auth
 		if (not self.auth is None):
-			mysqlKes += ",auth";
+			mysqlKeys += ",auth";
 			mysqlValues += ","+str(self.auth);
 		#registerTime
-		mysqlKes += ",registerTime";
+		mysqlKeys += ",registerTime";
 		mysqlValues += ","+mysql.get_mysql_value_string(self.registerTime);
 		#lastLoginTime
-		mysqlKes += ",lastLoginTime";
+		mysqlKeys += ",lastLoginTime";
 		mysqlValues += ","+mysql.get_mysql_value_string(self.lastLoginTime);
 
 		#myqlStrend
-		mysqlStr += mysqlKes+") VALUES("+mysqlValues+")";
+		mysqlStr += mysqlKeys+") VALUES("+mysqlValues+")";
 		
 		return mysqlStr
 	# ------------- function saveMysqlStr end -----
 	
 	# ------------- function selfCheck start -----
 	def selfCheck(self):
-		if (self.email is None ) and (self.phoneNum is None ):
-			return returnCode.Return(returnCode.InvalidParam,"email and phoneNum all empty")
+		if (self.nickName is None):
+			log.logger.info(" nickName is empty")
+			return returnCode.UserValue.INVALID_PARAM
 		if (self.email is None ):
 			self.email = "";
 		if (self.phoneNum is None ):
 			self.phoneNum = ""
-		if (len(self.email) == 0 ) and (len(self.phoneNum) == 0):
-			return returnCode.Return(returnCode.InvalidParam,"email and phoneNum all empty")
+		if (len(self.nickName) == 0 ):
+			log.logger.info(" nickName is empty")
+			return returnCode.UserValue.INVALID_PARAM
 		if (self.passWord is None )or (len(self.passWord) == 0):
-			return returnCode.Return(returnCode.InvalidParam,"passWord empty")
+			log.logger.info(" passWord empty")
+			return returnCode.UserValue.INVALID_PARAM
 		if (self.passWord is None ) or (len(self.nickName) == 0):
-			return returnCode.Return(returnCode.InvalidParam,"nickName empty")
-		return returnCode.Return(returnCode.OK,"OK")	
+			log.logger.info("nickName empty")
+			return returnCode.UserValue.INVALID_PARAM
+		return returnCode.UserValue.OK
 	# ------------- function selfCheck end   -----
 	# ------------- function updateMysqlStr start   -----
-	def updateMysqlStr(self,uid=-1,phoneNum="",email=""):
+	def updateMysqlStr(self,uid=-1,nickName="",phoneNum="",email=""):
 		mysqlStr ="UPDATE TblUser SET ";
 		#nickName
 		if (not self.nickName is None) and (len(self.nickName) > 0):
@@ -154,6 +159,8 @@ class User:
 		#myqlStrend
 		if uid != -1: 
 			mysqlStr += " WHERE uid="+str(uid);
+		elif len(nickName) != 0:
+			mysqlStr += " WHERE nickName=" + mysql.get_mysql_value_string(nickName)
 		elif len(phoneNum) != 0:
 			 mysqlStr += " WHERE phoneNum=" + mysql.get_mysql_value_string(phoneNum)
 		else:

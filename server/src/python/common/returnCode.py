@@ -1,13 +1,24 @@
-UnKnowError = -1
-OK = 0
-NoSuchObject = 1
-AlreadyExist = 2
-InvalidParam = 3
-MysqlError = 4
+class UserValue:
+	OK = 0
+	NO_SUCH_OBJECT = 1
+	ALREADY_EXIST = 2
+	INVALID_PARAM = 3
+	FAIL = 4
+class IdeaValue:
+	OK = 0
+	NO_SUCH_OBJECT = 1
+	ALREADY_EXIST = 2
+	INVALID_PARAM = 3
+	FAIL = 4
+class TokenValue:
+	OK = 0
+	TIME_OUT = 2
+	INVALID_PARAM = 3
+class RegisterValue ():
+	REGIST_SUCC = 0
+	NAME_EXIST = 1
+	REGIST_FAIL = 2
 
-class Return:
-	ret = -1
-	msg = ""
-	def __init__(self,ret = -1,msg = ""):
-		self.ret = ret
-		self.msg = msg
+class UserLogin():
+	LOGIN_OK = 0
+	LOGIN_FAIL = 1

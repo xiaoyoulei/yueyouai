@@ -25,6 +25,7 @@ create table TblUser
     `registerTime`  TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'register time',
     `lastLoginTime` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'last login time' ,
     PRIMARY KEY (uid),
+    UNIQUE KEY `UK_nickName`(nickName),
     UNIQUE KEY `UK_email`(email),
     UNIQUE KEY `UK_phoneNum`(phoneNum)
 )
@@ -37,7 +38,7 @@ INSERT INTO TblUser(nickName,email,phoneNum,passWord) VALUES('admin','admin@yuey
 create table TblIdea
 (
 	`iid`		int unsigned NOT NULL   AUTO_INCREMENT COMMENT 'idea id',
-	`tile`		varchar(256) NOT NULL COMMENT 'ieda title',
+	`title`		varchar(256) NOT NULL COMMENT 'ieda title',
 	`abstract`	varchar(256) NOT NULL COMMENT 'ieda abstract',
 	`content`	TEXT	NOT NULL COMMENT 'idead content ,max size 65535',
 	`userLove`	int unsigned NOT NULL DEFAULT 0 COMMENT 'the user love',

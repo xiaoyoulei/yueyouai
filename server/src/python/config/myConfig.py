@@ -6,6 +6,7 @@ class MyConfig:
 	mysql = {}
 	mysqlPool = {}
 	AES = {}
+	SECURE_KEY ={}
 	def __init__(self):
 		config = ConfigParser.ConfigParser()
 		confFileName = os.path.split(os.path.realpath(__file__))[0]+"/yueyouai.ini"
@@ -23,6 +24,7 @@ class MyConfig:
 		if len(self.AES["key"]) != 16 :
 			raise Exception,"AES.key must 16"
 		self.AES["MD5"] =  config.get("AES","MD5")
+		self.SECURE_KEY["key"] = config.get("SECURE_KEY" , "key")
 		#print self.mysql
 #we can only have a global config object
 yueYouAiConfig = MyConfig();

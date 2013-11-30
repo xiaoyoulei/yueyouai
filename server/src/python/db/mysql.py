@@ -35,10 +35,10 @@ def MysqlExecute(cursor,mysqlStr):
 	log.logger.info(mysqlStr)
 	return cursor.execute(mysqlStr)
 
-def MysqlReturn(ret,msg,conn,cursor):
+def MysqlReturn(ret,conn,cursor):
 	cursor.close()
 	conn.close()
-	return returnCode.Return(ret,msg)
+	return ret
 
 def testDB():
 	conn = g_pool.connection()
