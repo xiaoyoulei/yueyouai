@@ -25,7 +25,17 @@ class UserLoginHandler(tornado.web.RequestHandler):
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-
+		from_id = self.get_argument("from" , 0)
+		num = self.get_argument("num" , 0)
+		if num == 0 :
+			raise tornado.web.HTTPError(404)
+		else :
+			my_utils = utils.Utils()
+			res = my_utils.GetIdeaList(from_id , num)
+			if res == None :
+				raise tornado.web.HTTPError(404)
+			else :
+				self.write(json.dumps(res))
 		return 
 
 
@@ -63,6 +73,7 @@ if __name__ == "__main__":
 			[
 				(r"/login" , UserLoginHandler),
 				(r"/reg", UserRegisterHandler) ,
+				(r"/home", MainHandler) ,
 				], cookie_secret=myConfig.yueYouAiConfig.SECURE_KEY["key"])
 	application.listen(int(sys.argv[1]))
 	tornado.ioloop.IOLoop.instance().start()

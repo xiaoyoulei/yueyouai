@@ -1,7 +1,7 @@
 
 start()
 {
-    nohup	python server/server.py 8001 &
+    nohup	python server/server.py 8888 &
 }
 
 stop()
@@ -15,7 +15,7 @@ stop()
 case C"$1" in
 Cstart)
 	start
-	echo "server start , port is 8001"
+	echo "server start , port is 8888"
 	;;
 Cstop)
 	stop

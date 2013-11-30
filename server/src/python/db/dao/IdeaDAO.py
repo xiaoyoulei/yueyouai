@@ -27,7 +27,8 @@ import log
 import mysql
 import Idea
 import returnCode
-
+import json
+import commonUtils
 class IdeaDAO:
 	# --------function AddIdea start -----
 	def AddIdea(self,idea):
@@ -69,14 +70,74 @@ class IdeaDAO:
 		conn.close()
 		return returnCode.IdeaValue.OK
 	# --------function AddIdeaUserHate end -----
+	# --------function GetIdeaList start -----
+	def GetIdeaList(self,mysqlStr):
+		ideaList = []
+		conn = mysql.g_pool.connection()
+		cursor = conn.cursor() 
+		rowcount = mysql.MysqlExecute(cursor,mysqlStr)
+		#deal one
+		results =cursor.fetchall()
+		for res in results:
+			ideaDict = {}
+			self.createIdeaByMsyqlResult(ideaDict,res)
+			ideaList.append(ideaDict)
+		cursor.close()
+		conn.close() 
+		return ideaList
+
+	# --------function GetIdeaList end -----
+	# --------function GetTopIdeaByTime start -----
+	def GetTopIdeaByTime(self,topNum):
+		mysqlStr = "SELECT iid,title,abstract,content,imgUrl,userLove,userHate,status,uid,releaseTime FROM TblIdea  WHERE status=0 ORDER BY releaseTime desc LIMIT " + str(topNum)
+		return self.GetIdeaList(mysqlStr)
+	# --------function GetTopIdeaByTime end -----
+	# --------function GetAfterIdeaById start -----
+	def GetAfterIdeaById(self,iid,afterNum):
+		mysqlStr = "SELECT iid,title,abstract,content,imgUrl,userLove,userHate,status,uid,releaseTime FROM TblIdea  WHERE status=0 AND iid > "+str(iid)+ " ORDER BY iid LIMIT " + str(afterNum)
+		return self.GetIdeaList(mysqlStr)
+	# --------function GetAfterIdeaById end  -----
+	# --------function createIdeaByMsyqlResult start -----
+	def createIdeaByMsyqlResult(self,ideaDict,res):
+		ideaDict["type"] = commonUtils.ThingType.IdeaType
+		ind = 0
+		ideaDict["iid"] = int(res[ind])
+		ind +=1
+		ideaDict["title"] = res[ind]
+		ind +=1
+		ideaDict["abstract"] = res[ind]
+		ind +=1
+		ideaDict["content"] = res[ind]
+		ind +=1
+		ideaDict["imgUrl"] = res[ind]
+		ind +=1
+		ideaDict["userLove"] = int(res[ind])
+		ind +=1
+		ideaDict["userHate"] = int(res[ind])
+		ind +=1
+		ideaDict["status"] = int(res[ind])
+		ind +=1
+		ideaDict["uid"] = int(res[ind])
+		ind +=1
+		if ( not res[ind] is None):
+			ideaDict["releaseTime"] = str(res[ind])
+		else:
+			ideaDict["releaseTime"] = res[ind]
+		ind +=1
+	# --------function createIdeaByMsyqlResult end -----
+
 
 #-----------------------------------test -----------------------
 '''
 idea = Idea.Idea(title="idea title",abstract = "idea abstract",content = "idea content")
 ideaDao = IdeaDAO();
-ideaDao.AddIdea(idea);
+#ideaDao.AddIdea(idea);
 ideaDao.AddIdeaUserHate(3,12)
 ideaDao.AddIdeaUserLove(1,11)
+ideaList = ideaDao.GetAfterIdeaById(2,2)
+print json.dumps(ideaList)
+ideaList = ideaDao.GetTopIdeaByTime(2)
+print json.dumps(ideaList)
 '''
 # vim: set ts=4 sw=4: 
 

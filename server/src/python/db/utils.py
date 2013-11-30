@@ -1,13 +1,42 @@
 import os
-import sys
+import sys 
 filePath = os.path.split(os.path.realpath(__file__))[0]
 sys.path.append(filePath+"/dao")
-import UserDAO
+import UserDAO , IdeaDAO
 sys.path.append(filePath+"/../common")
-import returnCode ,User,Token
+import returnCode ,User,Idea ,Token ,commonUtils
 class Utils():
 
 	userDao = UserDAO.UserDAO()
+
+	ideaDao = IdeaDAO.IdeaDAO()
+
+	def GetIdeaList(self , from_id , num):
+		if from_id == 0 :
+			ideaList = self.ideaDao.GetTopIdeaByTime(num)
+		else:
+			ideaList = self.ideaDao.GetAfterIdeaById(from_id ,num)
+
+		ideas = []
+		min_id = 0
+		idea_tmp = {}
+		for idea in ideaList:
+			if idea["status"] != 0 :
+				continue 
+			idea_tmp["id"] = idea["iid"]
+			if  min_id > idea_tmp["id"] or min_id == 0:
+				min_id = idea_tmp["id"]
+			idea_tmp["type"] = commonUtils.ThingType.IdeaType 
+			idea_tmp["title"] = idea["title"]
+			idea_tmp["desc"] = idea["content"]
+			idea_tmp["pic"] = idea["imgUrl"]
+			idea_tmp["time"] = idea["releaseTime"]
+			ideas.append(idea_tmp)
+		res = {}
+		res["nowid"] = min_id
+		res["data"] = ideas
+		return res
+
 	
 	def addUser(self,user):
 		return self.userDao.AddUser(user)

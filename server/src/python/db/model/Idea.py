@@ -12,6 +12,7 @@ class Idea:
 	title = None
 	abstract = None
 	content = None
+	imgUrl = None
 	userLove = None
 	userHate = None
 	adminWeight = None
@@ -20,11 +21,12 @@ class Idea:
 	uid = None
 	releaseTime = None
 	
-	def __init__(self,iid=None,title=None,abstract=None,content=None,userLove=None,userHate=None,adminWeight=None,rank=None,status=None,uid=None,releaseTime=None):
+	def __init__(self,iid=None,title=None,abstract=None,content=None,imgUrl=None,userLove=None,userHate=None,adminWeight=None,rank=None,status=None,uid=None,releaseTime=None):
 		self.iid = iid
 		self.title = title
 		self.abstract = abstract
 		self.content = content
+		self.imgUrl = imgUrl
 		self.userLove = userLove
 		self.userHate = userHate
 		self.adminWeight = adminWeight
@@ -44,6 +46,10 @@ class Idea:
 		#content
 		mysqlKeys += ",content"
 		mysqlValues += "," + mysql.get_mysql_value_string(self.content)
+		#imgUrl
+		if (not self.imgUrl is None):
+			mysqlKeys += ",imgUrl"
+			mysqlValues += "," +mysql.get_mysql_value_string(self.imgUrl)
 		#userLove
 		if (not self.userLove is None) :
 			mysqlKeys += ",userLove"
@@ -78,13 +84,13 @@ class Idea:
 	# ----------- function saveMysqlStr end ----
 	# ----------- function selfCheck start ----
 	def selfCheck(self):
-		if (not self.title is None) or ( len(self.title) == 0 ):
+		if (self.title is None) or ( len(self.title) == 0 ):
 			log.logger.info(" title is empty")
 			return returnCode.IdeaValue.INVALID_PARAM
-		if (not self.abstract is None) or ( len(self.abstract) == 0):
+		if (self.abstract is None) or ( len(self.abstract) == 0):
 			log.logger.info(" abstract is empty") 
 			return returnCode.IdeaValue.INVALID_PARAM 
-		if (not self.content is None) or ( len(self.content) === 0):
+		if (self.content is None) or ( len(self.content) == 0):
 			log.logger.info(" content is empty") 
 			return returnCode.IdeaValue.INVALID_PARAM
 		return returnCode.IdeaValue.OK
