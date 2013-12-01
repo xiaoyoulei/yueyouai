@@ -96,6 +96,7 @@ create table TblComment
 	`refId`		int unsigned NOT NULL COMMENT 'ref id',
 	`content`	varchar(1024) NOT NULL COMMENT 'comment content ,must < 1024',
 	`uid`		int unsigned NOT NULL DEFAULT 1 COMMENT 'user provide id',
+	`releaseTime` TIMESTAMP	NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'release time',
 	PRIMARY KEY (cid),
 	KEY `K_UID`(uid),
 	KEY	`K_T_I`(refType,refId)

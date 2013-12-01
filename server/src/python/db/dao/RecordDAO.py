@@ -89,19 +89,19 @@ class RecordDAO:
 	# --------function GetRecordList end -----
 	# --------function GetTopRecordByTime start -----
 	def GetTopRecordByTime(self,topNum):
-		mysqlStr = "SELECT rid,title,site,time,content,userLove,userHate,status,uid,releaseTime FROM TblRecord  WHERE status=0 ORDER BY releaseTime desc LIMIT " + str(topNum)
+		mysqlStr = "SELECT rid,title,site,time,content,userLove,userHate,status,uid,releaseTime FROM TblRecord  WHERE status=0 ORDER BY releaseTime DESC LIMIT " + str(topNum)
 		return self.GetRecordList(mysqlStr)
 	# --------function GetTopRecordByTime end -----
 	# --------function GetAfterRecordById start -----
 	def GetAfterRecordById(self,rid,afterNum):
-		mysqlStr = "SELECT rid,title,site,time,content,userLove,userHate,status,uid,releaseTime FROM TblRecord  WHERE status=0 AND rid < "+str(rid)+ " ORDER BY rid LIMIT " + str(afterNum)
+		mysqlStr = "SELECT rid,title,site,time,content,userLove,userHate,status,uid,releaseTime FROM TblRecord  WHERE status=0 AND rid < "+str(rid)+ " ORDER BY rid DESC LIMIT " + str(afterNum)
 		return self.GetRecordList(mysqlStr)
 	# --------function GetAfterRecordById end  -----
 	# --------function GetAfterRecordByUid start  -----
 	def GetAfterRecordByUid(self,uid,rid,afterNum):
 		if rid == 0 :
 			rid = commonUtils.MAX_MYSQL_UINT
-		mysqlStr = "SELECT rid,title,site,time,content,userLove,userHate,status,uid,releaseTime FROM TblRecord  WHERE status=0 AND uid= "+str(uid) + " AND rid < "+str(rid)+ " ORDER BY rid LIMIT " + str(afterNum)
+		mysqlStr = "SELECT rid,title,site,time,content,userLove,userHate,status,uid,releaseTime FROM TblRecord  WHERE status=0 AND uid= "+str(uid) + " AND rid < "+str(rid)+ " ORDER BY rid DESC LIMIT " + str(afterNum)
 		return self.GetRecordList(mysqlStr)
 	# --------function GetAfterRecordByUid end  -----
 

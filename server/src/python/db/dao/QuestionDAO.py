@@ -77,20 +77,20 @@ class QuestionDAO:
 	# --------function GetQuestionList end ----- 
 	# --------function GetTopQuestionByTime start -----
 	def GetTopQuestionByTime(self,topNum):
-		mysqlStr = "SELECT qid,content,hitNum,status,releaseTime FROM TblQuestion WHERE status=0 ORDER BY releaseTime desc LIMIT "+ str(topNum)
+		mysqlStr = "SELECT qid,content,hitNum,status,releaseTime FROM TblQuestion WHERE status=0 ORDER BY releaseTime DESC  LIMIT "+ str(topNum)
 		return self.GetQuestionList(mysqlStr)
 	# --------function GetTopQuestionByTime end -----
 
 	# --------function GetAfterQuestionById start -----
 	def GetAfterQuestionById(self,qid,afterNum): 
-		mysqlStr = "SELECT qid,content,hitNum,status,releaseTime FROM TblQuestion WHERE status=0 AND qid < " + str(qid) + " ORDER BY qid LIMIT " + str(afterNum) 
+		mysqlStr = "SELECT qid,content,hitNum,status,releaseTime FROM TblQuestion WHERE status=0 AND qid < " + str(qid) + " ORDER BY qid DESC LIMIT " + str(afterNum) 
 		return self.GetQuestionList(mysqlStr) 
 	# --------function GetAfterQuestionById end -----
 	# --------function GetAfterQuestionByUid start  -----
 	def GetAfterQuestionByUid(self,uid,qid,afterNum):
 		if qid == 0 :
 			qid = commonUtils.MAX_MYSQL_UINT
-		mysqlStr = "SELECT qid,content,hitNum,status,releaseTime FROM TblQuestion  WHERE status=0 AND uid= "+str(uid) + " AND qid < "+str(qid)+ " ORDER BY qid LIMIT " + str(afterNum)
+		mysqlStr = "SELECT qid,content,hitNum,status,releaseTime FROM TblQuestion  WHERE status=0 AND uid= "+str(uid) + " AND qid < "+str(qid)+ " ORDER BY qid DESC LIMIT " + str(afterNum)
 		return self.GetQuestionList(mysqlStr)
 	# --------function GetAfterQuestionByUid end  -----
 	# --------function createQuestionByMsyqlResult start -----

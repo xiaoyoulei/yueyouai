@@ -89,19 +89,19 @@ class IdeaDAO:
 	# --------function GetIdeaList end -----
 	# --------function GetTopIdeaByTime start -----
 	def GetTopIdeaByTime(self,topNum):
-		mysqlStr = "SELECT iid,title,abstract,content,imgUrl,userLove,userHate,status,uid,releaseTime FROM TblIdea  WHERE status=0 ORDER BY releaseTime desc LIMIT " + str(topNum)
+		mysqlStr = "SELECT iid,title,abstract,content,imgUrl,userLove,userHate,status,uid,releaseTime FROM TblIdea  WHERE status=0 ORDER BY releaseTime DESC LIMIT " + str(topNum)
 		return self.GetIdeaList(mysqlStr)
 	# --------function GetTopIdeaByTime end -----
 	# --------function GetAfterIdeaById start -----
 	def GetAfterIdeaById(self,iid,afterNum):
-		mysqlStr = "SELECT iid,title,abstract,content,imgUrl,userLove,userHate,status,uid,releaseTime FROM TblIdea  WHERE status=0 AND iid < "+str(iid)+ " ORDER BY iid LIMIT " + str(afterNum)
+		mysqlStr = "SELECT iid,title,abstract,content,imgUrl,userLove,userHate,status,uid,releaseTime FROM TblIdea  WHERE status=0 AND iid < "+str(iid)+ " ORDER BY iid DESC LIMIT " + str(afterNum)
 		return self.GetIdeaList(mysqlStr)
 	# --------function GetAfterIdeaById end  -----
 	# --------function GetAfterIdeaByUid start  -----
 	def GetAfterIdeaByUid(self,uid,iid,afterNum):
 		if iid == 0 :
 			iid = commonUtils.MAX_MYSQL_UINT
-		mysqlStr = "SELECT iid,title,abstract,content,imgUrl,userLove,userHate,status,uid,releaseTime FROM TblIdea  WHERE status=0 AND uid= "+str(uid) + " AND iid < "+str(iid)+ " ORDER BY iid LIMIT " + str(afterNum)
+		mysqlStr = "SELECT iid,title,abstract,content,imgUrl,userLove,userHate,status,uid,releaseTime FROM TblIdea  WHERE status=0 AND uid= "+str(uid) + " AND iid < "+str(iid)+ " ORDER BY iid DESC LIMIT " + str(afterNum)
 		return self.GetIdeaList(mysqlStr)
 	# --------function GetAfterIdeaByUid end  -----
 	# --------function createIdeaByMsyqlResult start -----
