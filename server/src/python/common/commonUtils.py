@@ -8,6 +8,6 @@ def convert_int_to_string_time(second):
 
 class ThingType():
 	IdeaType = 1
-	EventType = 2
+	RecordType = 2
 	CommentType = 3
 	QuestionTpye = 4

@@ -16,6 +16,12 @@ class QuestionValue:
 	ALREADY_EXIST = 2
 	INVALID_PARAM = 3
 	FAIL = 4
+class RecordValue:
+	OK = 0
+	NO_SUCH_OBJECT = 1
+	ALREADY_EXIST = 2
+	INVALID_PARAM = 3
+	FAIL = 4
 class TokenValue:
 	OK = 0
 	TIME_OUT = 2

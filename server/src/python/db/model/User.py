@@ -100,20 +100,20 @@ class User:
 	# ------------- function selfCheck start -----
 	def selfCheck(self):
 		if (self.nickName is None):
-			log.logger.info(" nickName is empty")
+			log.logger.debug(" nickName is empty")
 			return returnCode.UserValue.INVALID_PARAM
 		if (self.email is None ):
 			self.email = "";
 		if (self.phoneNum is None ):
 			self.phoneNum = ""
 		if (len(self.nickName) == 0 ):
-			log.logger.info(" nickName is empty")
+			log.logger.debug(" nickName is empty")
 			return returnCode.UserValue.INVALID_PARAM
 		if (self.passWord is None )or (len(self.passWord) == 0):
-			log.logger.info(" passWord empty")
+			log.logger.debug(" passWord empty")
 			return returnCode.UserValue.INVALID_PARAM
 		if (self.passWord is None ) or (len(self.nickName) == 0):
-			log.logger.info("nickName empty")
+			log.logger.debug("nickName empty")
 			return returnCode.UserValue.INVALID_PARAM
 		return returnCode.UserValue.OK
 	# ------------- function selfCheck end   -----

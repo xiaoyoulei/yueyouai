@@ -85,13 +85,13 @@ class Idea:
 	# ----------- function selfCheck start ----
 	def selfCheck(self):
 		if (self.title is None) or ( len(self.title) == 0 ):
-			log.logger.info(" title is empty")
+			log.logger.debug(" title is empty")
 			return returnCode.IdeaValue.INVALID_PARAM
 		if (self.abstract is None) or ( len(self.abstract) == 0):
-			log.logger.info(" abstract is empty") 
+			log.logger.debug(" abstract is empty") 
 			return returnCode.IdeaValue.INVALID_PARAM 
 		if (self.content is None) or ( len(self.content) == 0):
-			log.logger.info(" content is empty") 
+			log.logger.debug(" content is empty") 
 			return returnCode.IdeaValue.INVALID_PARAM
 		return returnCode.IdeaValue.OK
 

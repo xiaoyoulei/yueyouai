@@ -63,9 +63,8 @@ class Question:
 		if (not self.status is None):
 			mysqlKeys += ",status"
 			mysqlValues += "," + str(self.status)
-		if (not self.uid is None):
-			mysqlKeys += ",uid"
-			mysqlValues += "," + str(self.uid)
+		mysqlKeys += ",uid"
+		mysqlValues += "," + str(self.uid)
 		if (not self.releaseTime is None):
 			mysqlKeys += ",releaseTime"
 			mysqlValues += "," + mysql.get_mysql_value_string(self.releaseTime)
@@ -77,8 +76,11 @@ class Question:
 	# --------------function selfCheck start ----  
 	def selfCheck(self):
 		if (self.content is None) or ( len(self.content) == 0 ): 
-			log.logger.info(" content is empty") 
+			log.logger.debug(" content is empty") 
 			return  returnCode.QuestionValue.INVALID_PARAM 
+		if (self.uid is None):
+			log.logger.debug(" uid is empty")
+			return  returnCode.QuestionValue.INVALID_PARAM
 		return returnCode.QuestionValue.OK
 	# --------------function selfCheck end ----  
 

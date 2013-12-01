@@ -58,7 +58,7 @@ ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT 'idea info';
 create table TblRecord
 (
 	`rid`		int unsigned NOT NULL   AUTO_INCREMENT COMMENT 'rid',
-	`tile`		varchar(256) NOT NULL COMMENT 'record title',
+	`title`		varchar(256) NOT NULL COMMENT 'record title',
 	`site`		varchar(256) NOT NULL COMMENT 'record site',
 	`time`		TIMESTAMP	NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'record time',
 	`content`	TEXT	NOT NULL COMMENT 'record content ,max size 65535',
