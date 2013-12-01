@@ -94,9 +94,17 @@ class RecordDAO:
 	# --------function GetTopRecordByTime end -----
 	# --------function GetAfterRecordById start -----
 	def GetAfterRecordById(self,rid,afterNum):
-		mysqlStr = "SELECT rid,title,site,time,content,userLove,userHate,status,uid,releaseTime FROM TblRecord  WHERE status=0 AND rid > "+str(rid)+ " ORDER BY rid LIMIT " + str(afterNum)
+		mysqlStr = "SELECT rid,title,site,time,content,userLove,userHate,status,uid,releaseTime FROM TblRecord  WHERE status=0 AND rid < "+str(rid)+ " ORDER BY rid LIMIT " + str(afterNum)
 		return self.GetRecordList(mysqlStr)
 	# --------function GetAfterRecordById end  -----
+	# --------function GetAfterRecordByUid start  -----
+	def GetAfterRecordByUid(self,uid,rid,afterNum):
+		if rid == 0 :
+			rid = commonUtils.MAX_MYSQL_UINT
+		mysqlStr = "SELECT rid,title,site,time,content,userLove,userHate,status,uid,releaseTime FROM TblRecord  WHERE status=0 AND uid= "+str(uid) + " AND rid < "+str(rid)+ " ORDER BY rid LIMIT " + str(afterNum)
+		return self.GetRecordList(mysqlStr)
+	# --------function GetAfterRecordByUid end  -----
+
 	# --------function createRecordByMsyqlResult start -----
 	def createRecordByMsyqlResult(self,recordDict,res):
 		recordDict["type"] = commonUtils.ThingType.RecordType
@@ -135,6 +143,8 @@ recordDao.AddRecordUserLove(1,11)
 recordList = recordDao.GetAfterRecordById(1,2)
 print json.dumps(recordList)
 recordList = recordDao.GetTopRecordByTime(2)
+print json.dumps(recordList)
+recordList = recordDao.GetAfterRecordByUid(2,0,2)
 print json.dumps(recordList)
 '''
 

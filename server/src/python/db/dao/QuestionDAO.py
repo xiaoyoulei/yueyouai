@@ -83,9 +83,16 @@ class QuestionDAO:
 
 	# --------function GetAfterQuestionById start -----
 	def GetAfterQuestionById(self,qid,afterNum): 
-		mysqlStr = "SELECT qid,content,hitNum,status,releaseTime FROM TblQuestion WHERE status=0 AND qid > " + str(qid) + " ORDER BY qid LIMIT " + str(afterNum) 
+		mysqlStr = "SELECT qid,content,hitNum,status,releaseTime FROM TblQuestion WHERE status=0 AND qid < " + str(qid) + " ORDER BY qid LIMIT " + str(afterNum) 
 		return self.GetQuestionList(mysqlStr) 
 	# --------function GetAfterQuestionById end -----
+	# --------function GetAfterQuestionByUid start  -----
+	def GetAfterQuestionByUid(self,uid,qid,afterNum):
+		if qid == 0 :
+			qid = commonUtils.MAX_MYSQL_UINT
+		mysqlStr = "SELECT qid,content,hitNum,status,releaseTime FROM TblQuestion  WHERE status=0 AND uid= "+str(uid) + " AND qid < "+str(qid)+ " ORDER BY qid LIMIT " + str(afterNum)
+		return self.GetQuestionList(mysqlStr)
+	# --------function GetAfterQuestionByUid end  -----
 	# --------function createQuestionByMsyqlResult start -----
 	def createQuestionByMsyqlResult(self,questionDict,res):
 		questionDict["type"] = commonUtils.ThingType.QuestionTpye
@@ -113,6 +120,8 @@ questionDao.AddHitNum(1,12)
 questionList = questionDao.GetTopQuestionByTime(2)
 print json.dumps(questionList)
 questionList = questionDao.GetAfterQuestionById(1,2)
+print json.dumps(questionList)
+questionList = questionDao.GetAfterQuestionByUid(1,0,3)
 print json.dumps(questionList)
 '''
 
