@@ -60,7 +60,7 @@ public class MainActivity extends TurboBaseActivity implements OnRefreshListener
 		listView.addFooterView(getLayoutInflater().inflate(R.layout.test_list_item, null));
 		listView.setAdapter(adapter);
 		listView.setBackgroundColor(Color.TRANSPARENT);
-		listView.setBackgroundResource(R.drawable.toast_view_bg);
+		listView.setBackgroundResource(R.drawable.toast_view_light_bg);
 		listView.setCacheColorHint(Color.CYAN);
 		listView.setDividerHeight(0);
 	}
