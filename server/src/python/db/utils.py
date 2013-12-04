@@ -1,5 +1,5 @@
 import os
-import sys 
+import sys  ,json
 filePath = os.path.split(os.path.realpath(__file__))[0]
 sys.path.append(filePath+"/dao")
 import UserDAO , IdeaDAO
@@ -19,10 +19,10 @@ class Utils():
 
 		ideas = []
 		min_id = 0
-		idea_tmp = {}
 		for idea in ideaList:
 			if idea["status"] != 0 :
 				continue 
+			idea_tmp = {}
 			idea_tmp["id"] = idea["iid"]
 			if  min_id > idea_tmp["id"] or min_id == 0:
 				min_id = idea_tmp["id"]

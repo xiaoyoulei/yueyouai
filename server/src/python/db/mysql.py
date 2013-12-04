@@ -10,7 +10,8 @@ import myConfig
 import MySQLdb
 import returnCode
 from DBUtils.PooledDB import PooledDB
-
+reload(sys)
+sys.setdefaultencoding( "utf-8" )
 m_s_user = myConfig.yueYouAiConfig.mysql["user"]
 m_s_passwd = myConfig.yueYouAiConfig.mysql["pwd"]
 m_s_host = myConfig.yueYouAiConfig.mysql["host"]
@@ -22,7 +23,7 @@ m_i_maxshared = int(myConfig.yueYouAiConfig.mysqlPool["maxshared"])
 m_i_maxconnections = int(myConfig.yueYouAiConfig.mysqlPool["maxconnections"])
 
 try:
-	g_pool = PooledDB(MySQLdb, user = m_s_user, passwd = m_s_passwd, host = m_s_host , port = m_i_port ,db = m_s_db , mincached= m_i_mincached , maxcached = m_i_maxcached , maxshared = m_i_maxshared , maxconnections = m_i_maxconnections )
+	g_pool = PooledDB(MySQLdb, user = m_s_user, passwd = m_s_passwd, host = m_s_host , port = m_i_port ,db = m_s_db , mincached= m_i_mincached , maxcached = m_i_maxcached , maxshared = m_i_maxshared , maxconnections = m_i_maxconnections , charset='utf8')
 except Exception, e:
 	msg = 'conn datasource Excepts!!!(%s).'%(str(e))
 	raise Exception,msg

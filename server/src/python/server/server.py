@@ -35,6 +35,7 @@ class MainHandler(tornado.web.RequestHandler):
 			if res == None :
 				raise tornado.web.HTTPError(404)
 			else :
+				self.set_header("Content-Type" , "text/json ")
 				self.write(json.dumps(res))
 		return 
 

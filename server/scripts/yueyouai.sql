@@ -16,7 +16,7 @@ create table TblUser
     `phoneNum`  varchar(64) DEFAULT NULL COMMENT 'phone num may use login in',
     `passWord`  varchar(128) NOT NULL COMMENT 'pass word,encoder',
 	`status`	tinyint(3) NOT NULL DEFAULT 0 COMMENT "0 ok,1 delete",
-    `sex`		tinyint(2) NOT NULL DEFAULT 2 COMMENT '1 male, 0 famaile, 2 unkown',
+    `sex`		tinyint(2) NOT NULL DEFAULT 2 COMMENT '1 male, 0 female, 2 unkown',
     `single`	tinyint(2) NOT NULL DEFAULT 2 COMMENT '0 yes, 1 no, 2 unkown',
     `birthTime` TIMESTAMP DEFAULT '0000-00-00 00:00:00' COMMENT 'birth day time',
     `togetherTime` TIMESTAMP DEFAULT '0000-00-00 00:00:00' COMMENT 'has a girl/boy friend',
