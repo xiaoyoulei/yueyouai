@@ -6,7 +6,7 @@ package com.yueyouai.app.data;
  */
 public interface Constant {
 	/** HOST地址*/
-	public static final String HOST = "127.0.0.1";
+	public static final String HOST = "23.226.79.72:8888";
 	/** 注册*/
 	public static final String URL_REGISTER = HOST + "";
 	/** 登录*/
@@ -23,5 +23,10 @@ public interface Constant {
 	public static final String URL_USER_INFO = HOST + "";
 	/** Cookie名称*/
 	public static final String COOKIE = "yueyouai_token";
+	/** 每次获取的Data的条数*/
+	public static final int DATA_STEP_NUM = 10;
+	
+	/** 当前消息数量*/
+	public static final String KEY_CURRENT_ITEM_NUM = "KEY_CURRENT_ITEM_NUM";
 	
 }

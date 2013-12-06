@@ -1,42 +1,62 @@
 package com.yueyouai.app.ui;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONObject;
+
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshAttacher;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener;
-import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.ActionBar.OnMenuVisibilityListener;
 import android.app.Activity;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
+import android.view.View.OnTouchListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.turbo.TurboBaseActivity;
-import com.turbo.view.LoadingDialog;
+import com.turbo.common.URLHelper;
+import com.turbo.data.SharedPerferencesHelper;
+import com.turbo.net.VolleyNetHelper.NetCallBack;
+import com.turbo.view.TurboLoadingFooter;
+import com.turbo.view.TurboLoadingFooter.State;
 import com.turbo.view.TurboToast;
+import com.yueyouai.app.App;
 import com.yueyouai.app.R;
+import com.yueyouai.app.data.Constant;
+import com.yueyouai.app.data.DoMainBean;
+import com.yueyouai.app.ui.adapter.TestMAdapter;
+import com.yueyouai.app.view.DockViewHelper;
+import com.yueyouai.app.view.PullToRefreshHelper;
+import com.yueyouai.app.view.SlidingMenuHelper;
 
-public class MainActivity extends TurboBaseActivity implements OnRefreshListener{
+public class MainActivity extends TurboBaseActivity {
+	
 
-	private PullToRefreshAttacher mPullToRefreshAttacher;
+	/** View控件*/
 	private SlidingMenu sm;
 	private ListView listView;
-	private Activity activity;
+	private TurboLoadingFooter loadingFooter;
+	private DockViewHelper dockViewHelper;
 	
-	 static String[] ITEMS = {"Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam",
-         "Abondance", "Ackawi", "Acorn", "Adelost", "Affidelice au Chablis", "Afuega'l Pitu",
-         "Airag", "Airedale", "Aisy Cendre", "Allgauer Emmentaler", "Abbaye de Belloc",
-         "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi", "Acorn", "Adelost",
-         "Affidelice au Chablis", "Afuega'l Pitu", "Airag", "Airedale", "Aisy Cendre",
-         "Allgauer Emmentaler","太平天国","一户人家","有得有失","加油到底"};
-	 
+	/** 全局变量*/
+	private Activity activity;
+	private OnRefreshL refreshListener;
+	private PullToRefreshAttacher mPullToRefreshAttacher;
+
+	/** 数据源*/
+	private List<DoMainBean> mainData = new ArrayList<DoMainBean>();
+	private TestMAdapter adapter;
+
+	// private String url =
+	// "https://s3-ap-northeast-1.amazonaws.com/testhotel/hotels.json";// 测试的URl
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,71 +66,79 @@ public class MainActivity extends TurboBaseActivity implements OnRefreshListener
 
 	private void init() {
 		activity = this;
+		loadingFooter = new TurboLoadingFooter(activity);
+		dockViewHelper = new DockViewHelper(activity);
 		initActionBar();
 		initPullToRefresh();
 		initSlidingMenu();
 		initListView();
+		// TODO： 测试是否有必要加
+		loadData(new LoadMoreDoMainNetCallBack());
 	}
 
-	@SuppressLint("NewApi")
+	/**
+	 * 初始化ListView
+	 */
 	private void initListView() {
 		listView = (ListView) findViewById(R.id.listView);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.test_list_item, ITEMS);
-		listView.addFooterView(getLayoutInflater().inflate(R.layout.test_list_item, null));
+		listView.addFooterView(loadingFooter.getView());
+		adapter = new TestMAdapter(activity, mainData, App.getNetHellper());
 		listView.setAdapter(adapter);
 		listView.setBackgroundColor(Color.TRANSPARENT);
-		listView.setBackgroundResource(R.drawable.toast_view_light_bg);
 		listView.setCacheColorHint(Color.CYAN);
-		listView.setDividerHeight(0);
+		listView.setDividerHeight(18);
+
+		// 添加事件监听
+		listView.setOnScrollListener(new OnScrollL());
+		listView.setOnTouchListener(new DockMenuL());
 	}
 
-	/** 初始化ActionBar*/
-	@SuppressLint("NewApi")
+	/** 初始化ActionBar */
 	private void initActionBar() {
-		// TODO Auto-generated method stub
-		ActionBar actionBar = getActionBar();
-		actionBar.addOnMenuVisibilityListener(new OnMenuVisibilityListener() {
-			@Override
-			public void onMenuVisibilityChanged(boolean isVisible) {
-				Toast.makeText(MainActivity.this, "Hello", Toast.LENGTH_SHORT).show();
-			}
-		});
+		// ActionBar actionBar = getActionBar();
+		// actionBar.addOnMenuVisibilityListener(new OnMenuVisibilityListener()
+		// {
+		// @Override
+		// public void onMenuVisibilityChanged(boolean isVisible) {
+		// Toast.makeText(MainActivity.this, "Hello", Toast.LENGTH_SHORT)
+		// .show();
+		// }
+		// });
 	}
 
 	/**
 	 * 初始化SlidingMenu
 	 */
 	private void initSlidingMenu() {
-		sm = new SlidingMenu(this);
-		sm.attachToActivity(this, SlidingMenu.SLIDING_WINDOW,true);
-		sm.setShadowWidthRes(R.dimen.shadow_width);
-		sm.setShadowDrawable(R.drawable.shadow);
-		sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-		sm.setFadeDegree(0.35f);
-		sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-		sm.setMenu(R.layout.left_sliding_layout);
-		
-		sm.findViewById(R.id.left_btn1).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				TurboToast.showMsg(activity, "按钮1被点击！");
-				LoadingDialog.loading(MainActivity.this, "Hi Guys !");
-			}
-		});;
+		sm = SlidingMenuHelper.initSlidingMenu(activity);
 	}
 
-
-
+	/**
+	 * 初始化下拉刷新控件
+	 */
 	private void initPullToRefresh() {
-		// Get View for which the user will scroll…
 		View scrollableView = findViewById(R.id.listView);
-	    // Create a PullToRefreshAttacher instance
-	    mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
-	    // Add the Refreshable View and provide the refresh listener
-	    mPullToRefreshAttacher.addRefreshableView(scrollableView, this);
-	    mPullToRefreshAttacher.setRefreshing(true);
-	    onRefreshStarted(null);
+		refreshListener = new OnRefreshL();
+		mPullToRefreshAttacher = PullToRefreshHelper.initPullToRefresh(
+				activity, scrollableView, refreshListener);
+	}
+
+	/**
+	 * 加载数据
+	 */
+	private void loadData(NetCallBack<JSONObject> callBack) {
+		String url = "";
+		int from = SharedPerferencesHelper.newInstance().readInt(
+				Constant.KEY_CURRENT_ITEM_NUM);
+		Map<String, String> params = new HashMap<String, String>();
+		if (0 == from) {
+			params.put("num", Constant.DATA_STEP_NUM + "");
+			url = URLHelper.buildUrl(Constant.URL_DO_MAIN, params);
+		} else {
+			params.put("from", from + "");
+			url = URLHelper.buildUrl(url, params);
+		}
+		App.getNetHellper().doJsonGet(activity, url, null, callBack);
 	}
 
 	@Override
@@ -118,37 +146,162 @@ public class MainActivity extends TurboBaseActivity implements OnRefreshListener
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
-	/*****************************************
-	 * 			监	 听	器
-	 *****************************************/
-	/** 滑动刷新回调函数*/
-	@Override
-	public void onRefreshStarted(View view) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
 
-            @Override
-            protected void onPostExecute(Void result) {
-                super.onPostExecute(result);
-                //通知加载完成
-                mPullToRefreshAttacher.setRefreshComplete();
-                TurboToast.showMsg(MainActivity.this,Gravity.CENTER, "已是最新内容");
-            }
-        }.execute();
-	}
-	
+	/*****************************************
+	 * 监 听 器
+	 *****************************************/
+
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
-		LoadingDialog.endLoading();
+		if (sm.isMenuShowing())
+			sm.showContent();
+		else
+			super.onBackPressed();
+	}
+
+	/**
+	 * 刷新首页数据的网络回调
+	 * 
+	 * @author Ted
+	 */
+	private class RefreshDoMainNetCallBack implements NetCallBack<JSONObject> {
+		@Override
+		public void onSuccess(JSONObject resp) {
+			ArrayList<DoMainBean> data = (ArrayList<DoMainBean>) DoMainBean
+					.parse(resp.toString());
+			mainData.addAll(0, data);
+			mPullToRefreshAttacher.setRefreshComplete();
+			if (mainData.size() > 0) {
+				int currentNum = SharedPerferencesHelper.newInstance().readInt(
+						Constant.KEY_CURRENT_ITEM_NUM);
+				SharedPerferencesHelper.newInstance().writeInt(
+						Constant.KEY_CURRENT_ITEM_NUM,
+						currentNum + mainData.size());
+				adapter.notifyDataSetChanged();
+				TurboToast.showMsg(activity, "更新了" + mainData.size() + "条数据");
+			} else {
+				TurboToast.showMsg(activity, "已加载完全部！");
+				loadingFooter.setState(State.TheEnd);
+			}
+		}
+
+		@Override
+		public void onError(String errorMsg) {
+			TurboToast.showMsg(activity, errorMsg);
+			// listView.removeFooterView(loadingFooter.getView());
+		}
+	}
+
+	/**
+	 * 加载更多首页数据
+	 * 
+	 * @author Ted
+	 */
+	private class LoadMoreDoMainNetCallBack implements NetCallBack<JSONObject> {
+		@Override
+		public void onSuccess(JSONObject resp) {
+			ArrayList<DoMainBean> data = (ArrayList<DoMainBean>) DoMainBean
+					.parse(resp.toString());
+			mainData.addAll(data);
+			if (mainData.size() > 0) {
+				int currentNum = SharedPerferencesHelper.newInstance().readInt(
+						Constant.KEY_CURRENT_ITEM_NUM);
+				SharedPerferencesHelper.newInstance().writeInt(
+						Constant.KEY_CURRENT_ITEM_NUM,
+						currentNum + mainData.size());
+				// listView.removeFooterView(loadingFooter.getView());
+				adapter.notifyDataSetChanged();
+			} else {
+				loadingFooter.setState(State.TheEnd);
+			}
+		}
+
+		@Override
+		public void onError(String errorMsg) {
+			TurboToast.showMsg(activity, errorMsg);
+			// listView.removeFooterView(loadingFooter.getView());
+		}
+
+	}
+
+	/**
+	 * 下拉监听刷新首页数据
+	 * 
+	 * @author Ted
+	 */
+	private class OnRefreshL implements OnRefreshListener {
+		@Override
+		public void onRefreshStarted(View view) {
+			loadData(new RefreshDoMainNetCallBack());
+		}
+	}
+
+	/**
+	 * 加载更多数据监听器
+	 * 
+	 * @author Ted
+	 */
+	private class OnScrollL implements OnScrollListener {
+
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			if (isScrollEnd(view, loadingFooter.getView())) {
+				loadData(new LoadMoreDoMainNetCallBack());
+			}
+		}
+
+		@Override
+		public void onScroll(AbsListView view, int firstVisibleItem,
+				int visibleItemCount, int totalItemCount) {
+		}
+
+		/**
+		 * 判断ScrollView是否滚动到最底部（以targetView为参考） 判断是滚动到底部
+		 * 
+		 * @param view
+		 * @param targetView
+		 * @return
+		 */
+		private boolean isScrollEnd(AbsListView view, View targetView) {
+			boolean scrollEnd = false;
+			try {
+				if (view.getPositionForView(targetView) == view
+						.getLastVisiblePosition())
+					scrollEnd = true;
+			} catch (Exception e) {
+				scrollEnd = false;
+			}
+			return scrollEnd;
+		}
+
+	}
+
+	/**
+	 * 打开关闭DockMenu的监听器
+	 * 
+	 * @author Ted
+	 */
+	private class DockMenuL implements OnTouchListener {
+		float y1 = 0;
+		float y2 = 0;
+		float Ydelta = 0;
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				y1 = event.getY();
+			}
+			if (event.getAction() == MotionEvent.ACTION_UP) {
+				y2 = event.getY();
+				Ydelta = y2 - y1;
+				if (Ydelta > 10) {
+					// 向下滑动时，显示DockMenu
+					dockViewHelper.showDockMenu();
+				} else if (Ydelta < -10) {
+					// 向上滑动时，因此DockMenu
+					dockViewHelper.closeDockMenu();
+				}
+			}
+			return false;
+		}
 	}
 }

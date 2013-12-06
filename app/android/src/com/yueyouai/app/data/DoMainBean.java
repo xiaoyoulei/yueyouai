@@ -131,10 +131,8 @@ public class DoMainBean {
 		tempBean.setType(tempObj.getInt("type"));
 		tempBean.setTitle(tempObj.getString("title"));
 		tempBean.setDesc(tempObj.getString("desc"));
-		JSONArray pic = tempObj.getJSONArray("pic");
-		// TODO：确定图片的顺序
-		tempBean.setThumbnail(pic.get(0).toString());
-		tempBean.setPicUrl(pic.get(1).toString());
+		tempBean.setThumbnail(tempObj.getString("pic"));
+		tempBean.setPicUrl(tempObj.getString("pic"));
 		return tempBean;
 	}
 }
