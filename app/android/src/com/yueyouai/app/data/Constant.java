@@ -6,7 +6,7 @@ package com.yueyouai.app.data;
  */
 public interface Constant {
 	/** HOST地址*/
-	public static final String HOST = "23.226.79.72:8888";
+	public static final String HOST = "http://23.226.79.72:8888";
 	/** 注册*/
 	public static final String URL_REGISTER = HOST + "";
 	/** 登录*/

@@ -6,10 +6,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
+import com.turbo.net.VolleyNetHelper;
 import com.yueyouai.app.R;
 import com.yueyouai.app.data.DoMainBean;
 
@@ -20,11 +22,15 @@ import com.yueyouai.app.data.DoMainBean;
  */
 public class DoMainAdapter extends BaseAdapter{
 
+	private Context mContext;
 	private List<DoMainBean> datas;
+	private VolleyNetHelper helper; 
 	private LayoutInflater inflater;
-	public DoMainAdapter(Context context,List<DoMainBean> datas){
+	
+	public DoMainAdapter(Context context,List<DoMainBean> datas,VolleyNetHelper helper){
 		this.datas = datas;
 		this.inflater = LayoutInflater.from(context);
+		this.mContext = context;
 	}
 	
 	@Override
@@ -48,20 +54,25 @@ public class DoMainAdapter extends BaseAdapter{
 		if(convertView == null){
 			convertView = inflater.inflate(R.layout.activity_main_list_item, null);
 			holder = new ViewHolder();
-			holder.image = (ImageView) convertView.findViewById(R.id.main_item_pic_image);
+			holder.image = (NetworkImageView) convertView.findViewById(R.id.main_item_pic_image);
 			holder.titleText = (TextView) convertView.findViewById(R.id.main_item_title_text);
 			holder.introduceText = (TextView) convertView.findViewById(R.id.main_item_introduce_text);
 			convertView.setTag(holder);
 		}else{
 			holder = (ViewHolder) convertView.getTag();
 		}
-		// TODO 接下来根据不同的数据对控件进行不同的操作
-		
+		// 接下来根据不同的数据对控件进行不同的操作
+		DoMainBean bean = datas.get(position);
+		holder.titleText.setText(bean.getTitle());
+		holder.introduceText.setText(bean.getDesc());
+		String imageUrl = datas.get(position).getThumbnail();
+		holder.image.setImageUrl(imageUrl,helper.getImageLoader(mContext));
+		holder.image.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.dock_menu_fadein));
 		return convertView;
 	}
 	
 	static class ViewHolder{
-		ImageView image;
+		NetworkImageView image;
 		TextView titleText;
 		TextView introduceText;
 	}

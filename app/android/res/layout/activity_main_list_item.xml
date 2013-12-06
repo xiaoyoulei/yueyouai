@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" 
-    android:background="@drawable/list_item_white_bg">
+    android:background="@drawable/toast_view_light_bg">
 	
 	 <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/main_item_pic_image"
@@ -11,6 +11,7 @@
             android:layout_height="wrap_content"
             android:minHeight="72dp"
             android:minWidth="72dp"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/ic_launcher" />
 	
 	<LinearLayout

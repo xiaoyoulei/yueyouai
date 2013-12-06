@@ -1,66 +1,67 @@
 package com.yueyouai.app.view;
 
-import android.content.Context;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.app.Activity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.yueyouai.app.R;
 
 /**
  * 底部按钮控件助手类
+ * 
  * @author Ted
  */
 public class DockViewHelper {
-	
-	private Context mContext;
-	private LayoutInflater mInflater;
-	private Button leftBtn;
-	private Button rightBtn;
-	private Button middleBtn;
-	
+
+	private Activity mActivity;
+	private LinearLayout leftBtnArea;
+	private LinearLayout rightBtnArea;
+	private LinearLayout middleBtnArea;
+
 	private TextView leftBtnText;
 	private TextView middleBtnText;
 	private TextView rightBtnText;
-	
+
 	private Animation showAnimation;
 	private Animation closeAnimation;
-	
-	private int IntervalTime = 50;
-	
-	
-	public DockViewHelper(Context context){
-		this.mContext = context;
-		this.mInflater = LayoutInflater.from(context);
+
+	private static boolean isDockMenuVisible = true;
+	private ViewGroup viewGroup;
+
+	public DockViewHelper(Activity activity) {
+		this.mActivity = activity;
 		initView();
 	}
-	
-	
+
 	private void initView() {
-		//初始化动画
-		showAnimation = AnimationUtils.loadAnimation(mContext, R.anim.dock_menu_show);
-		closeAnimation= AnimationUtils.loadAnimation(mContext, R.anim.dock_menu_close);
-		//设置显示位置
-		LinearLayout layout = (LinearLayout) mInflater.inflate(R.layout.view_dock_menu, null);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		params.gravity = Gravity.BOTTOM;
-		layout.setLayoutParams(params);
+		// 初始化动画
+		showAnimation = AnimationUtils.loadAnimation(mActivity,
+				R.anim.dock_menu_fadein);
+		closeAnimation = AnimationUtils.loadAnimation(mActivity,
+				R.anim.dock_menu_fadeout);
 		
-		//初始化控件
-		leftBtn = (Button) layout.findViewById(R.id.dock_menu_leftBtn);
-		middleBtn = (Button) layout.findViewById(R.id.dock_menu_middleBtn);
-		rightBtn = (Button) layout.findViewById(R.id.dock_menu_rightBtn);
+		viewGroup = (ViewGroup) mActivity.findViewById(R.id.view_dock_menu_layout);
 		
-		leftBtnText = (TextView) layout.findViewById(R.id.dock_menu_leftBtn_text);
-		middleBtnText = (TextView) layout.findViewById(R.id.dock_menu_middleBtn_text);
-		rightBtn = (Button) layout.findViewById(R.id.dock_menu_rightBtn_text);
-		
+		// 初始化控件
+		leftBtnArea = (LinearLayout) mActivity
+				.findViewById(R.id.dock_menu_leftBtn_area);
+		middleBtnArea = (LinearLayout) mActivity
+				.findViewById(R.id.dock_menu_middleBtn_area);
+		rightBtnArea = (LinearLayout) mActivity
+				.findViewById(R.id.dock_menu_rightBtn_area);
+
+		leftBtnText = (TextView) mActivity
+				.findViewById(R.id.dock_menu_leftBtn_text);
+		middleBtnText = (TextView) mActivity
+				.findViewById(R.id.dock_menu_middleBtn_text);
+		rightBtnText = (TextView) mActivity
+				.findViewById(R.id.dock_menu_rightBtn_text);
+
 		addListener();
 	}
 
@@ -70,43 +71,65 @@ public class DockViewHelper {
 	private void addListener() {
 	}
 
-
 	/**
 	 * 关闭DockMenu
 	 */
-	public void closeDockMenu(){
-		close(leftBtn, 0);
-		close(middleBtn, IntervalTime);
-		close(rightBtn, IntervalTime*2);
+	public void closeDockMenu() {
+		if (isDockMenuVisible) {
+			closeAnimation.setAnimationListener(new AnimationListener() {
+				@Override
+				public void onAnimationStart(Animation animation) {}
+				@Override
+				public void onAnimationRepeat(Animation animation) {}
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					viewGroup.setVisibility(View.INVISIBLE);
+					isDockMenuVisible = false;
+				}
+			});
+			viewGroup.startAnimation(closeAnimation);
+		}
 	}
-	
+
 	/**
 	 * 打开DockMenu
 	 */
-	public void showDockMenu(){
-		show(leftBtn, 0);
-		show(middleBtn, IntervalTime);
-		show(rightBtn, IntervalTime*2);
-		
+	public void showDockMenu() {
+		if (!isDockMenuVisible) {
+			showAnimation.setAnimationListener(new AnimationListener() {
+				@Override
+				public void onAnimationStart(Animation animation) {}
+				@Override
+				public void onAnimationRepeat(Animation animation) {}
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					viewGroup.setVisibility(View.VISIBLE);
+					isDockMenuVisible = true;
+				}
+			});
+			viewGroup.startAnimation(showAnimation);
+		}
 	}
-	
+
 	/**
 	 * 显示
+	 * 
 	 * @param view
 	 * @param delayTime
 	 */
-	private void show(final View view, int delayTime){
+	private void show(final View view, int delayTime) {
 		view.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				view.setVisibility(View.VISIBLE);
 				view.startAnimation(showAnimation);
+				view.setVisibility(View.VISIBLE);
 			}
 		}, delayTime);
 	}
-	
+
 	/**
 	 * 关闭
+	 * 
 	 * @param view
 	 * @param delayTime
 	 */
@@ -114,7 +137,7 @@ public class DockViewHelper {
 		view.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				view.setVisibility(View.GONE);
+				view.setVisibility(View.INVISIBLE);
 				view.startAnimation(closeAnimation);
 			}
 		}, delayTime);

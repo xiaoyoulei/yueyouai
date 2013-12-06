@@ -8,14 +8,12 @@
     android:orientation="horizontal" >
 
     <LinearLayout
-        android:id="@+id/dock_menu_leftBtn"
+        android:id="@+id/dock_menu_leftBtn_area"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@android:color/transparent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="invisible" >
+        android:gravity="center" >
 
         <ImageView
             android:layout_width="wrap_content"
@@ -31,14 +29,12 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/dock_menu_middleBtn"
+        android:id="@+id/dock_menu_middleBtn_area"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@android:color/transparent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="invisible" >
+        android:gravity="center" >
 
         <ImageView
             android:layout_width="wrap_content"
@@ -54,14 +50,12 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/dock_menu_rightBtn"
+        android:id="@+id/dock_menu_rightBtn_area"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@android:color/transparent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="invisible" >
+        android:gravity="center" >
 
         <ImageView
             android:layout_width="wrap_content"

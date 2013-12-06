@@ -7,14 +7,16 @@
         android:id="@+id/scrollView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@drawable/list_view_gray_bg"
         android:orientation="vertical" >
 
         <ListView
             android:id="@+id/listView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:cacheColorHint="@android:color/transparent" />
+            android:cacheColorHint="@android:color/transparent"
+            android:listSelector="@drawable/main_list_item_selector"
+            android:divider="@android:color/transparent" 
+            />
 
         <include
             android:background="@android:color/transparent"
