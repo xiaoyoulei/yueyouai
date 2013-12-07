@@ -131,8 +131,10 @@ public class DoMainBean {
 		tempBean.setType(tempObj.getInt("type"));
 		tempBean.setTitle(tempObj.getString("title"));
 		tempBean.setDesc(tempObj.getString("desc"));
-		tempBean.setThumbnail(tempObj.getString("pic"));
-		tempBean.setPicUrl(tempObj.getString("pic"));
+		String pic = tempObj.getString("pic");
+		String[] pics = pic.split(";");
+		tempBean.setThumbnail(pics[0]);
+		tempBean.setPicUrl(pics[0]);
 		return tempBean;
 	}
 }

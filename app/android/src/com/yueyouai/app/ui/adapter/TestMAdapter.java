@@ -6,12 +6,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
+import com.turbo.volley.toolbox.NetworkImageView;
 import com.turbo.net.VolleyNetHelper;
 import com.yueyouai.app.R;
 import com.yueyouai.app.data.HotelMessageBean;

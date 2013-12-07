@@ -28,8 +28,7 @@
             android:id="@+id/act_login_account_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
+            android:hint="UserName"
             android:textSize="18sp" />
 
         <EditText
@@ -41,13 +40,13 @@
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/act_register_confirm_psw_edit_text"
+            android:id="@+id/act_register_mail_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password again"
-            android:inputType="textPassword"
+            android:hint="E-mail"
+            android:inputType="textEmailAddress"
             android:textSize="18sp"
-            android:visibility="gone" />
+            />
     </LinearLayout>
 
     <LinearLayout

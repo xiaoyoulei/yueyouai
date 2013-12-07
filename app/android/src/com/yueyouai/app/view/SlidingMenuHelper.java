@@ -1,13 +1,16 @@
 package com.yueyouai.app.view;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.turbo.view.TurboLoadingDialog;
+import com.turbo.data.SharedPerferencesHelper;
 import com.turbo.view.TurboToast;
 import com.yueyouai.app.R;
+import com.yueyouai.app.ui.LoginActivity;
+import com.yueyouai.app.ui.ShareActivity;
 
 /**
  * SlidingMenu助手类
@@ -46,11 +49,12 @@ public class SlidingMenuHelper {
 	 * 初始化SlidingMenu中的控件
 	 */
 	private static void initView(){
-		sm.findViewById(R.id.left_btn1).setOnClickListener(new OnClickListener() {
+		sm.findViewById(R.id.sm_left_btn1).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				TurboToast.showMsg(mActivity, "按钮1被点击！");
-				TurboLoadingDialog.loading(mActivity, "Hi Guys !");
+				Intent intent = new Intent();
+				intent.setClass(mActivity, LoginActivity.class);
+				mActivity.startActivity(intent);
 				sm.showContent();
 			}
 		});
@@ -58,7 +62,17 @@ public class SlidingMenuHelper {
 		sm.findViewById(R.id.left_btn2).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				TurboToast.showMsg(mActivity, "按钮2被点击");
+				TurboToast.showMsg(mActivity, "我们是一个神秘的组织 ...");
+			}
+		});
+		
+		sm.findViewById(R.id.left_btn3).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(mActivity, ShareActivity.class);
+				mActivity.startActivity(intent);
+				sm.showContent();
 			}
 		});
 	}

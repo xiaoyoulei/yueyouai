@@ -1,27 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <Button
-        android:id="@+id/left_btn1"
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
-        android:text="按钮 1"
-        />
 
-    <Button
-        android:id="@+id/left_btn2"
-        android:layout_width="fill_parent" 
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="按钮 2"
-        />
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/left_btn3"
-        android:layout_width="fill_parent" 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_launcher" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="按钮 3"
-        />
-</LinearLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/sm_left_btn1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="登 录" />
+
+        <Button
+            android:id="@+id/left_btn2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="关 于" />
+        
+        
+        <Button
+            android:id="@+id/left_btn3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="分 享" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -2,6 +2,7 @@ package com.yueyouai.app.view;
 
 import android.app.Activity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -9,6 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.turbo.view.TurboToast;
 import com.yueyouai.app.R;
 
 /**
@@ -69,6 +71,28 @@ public class DockViewHelper {
 	 * 对按钮添加点击事件监听
 	 */
 	private void addListener() {
+		leftBtnArea.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				TurboToast.showMsg(mActivity, "Left Button");
+			}
+		});
+		
+		middleBtnArea.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				TurboToast.showMsg(mActivity, "Middle Button");
+			}
+		});
+		
+		rightBtnArea.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				TurboToast.showMsg(mActivity, "Right Button");
+			}
+		});
 	}
 
 	/**

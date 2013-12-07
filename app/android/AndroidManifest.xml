@@ -21,6 +21,14 @@
             android:label="@string/app_name" >
         </activity>
         <activity
+            android:name="com.yueyouai.app.ui.LoginActivity"
+            android:label="@string/app_name" >
+        </activity>
+          <activity
+            android:name="com.yueyouai.app.ui.ShareActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
             android:name="com.yueyouai.app.ui.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
