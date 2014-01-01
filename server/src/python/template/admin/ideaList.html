@@ -24,12 +24,53 @@
 		{% end %}
 		</ul>
 		-->
-		<table name="ideaListTable">
+		<table name="ideaListTable"  width="50%" style="margin:auto">
 			{% for idea in ideas %}
-			<table>
-
-			</table>
+			<tr> <td>
+				<table border="1"  width="100%">
+					<tr><td>
+							<table border="1" width="100%">
+							<tr>
+								<td> <img src= {{escape(idea["pic"][0])}} style="width:80px;height:80px;"> </td>
+								<td>
+								<table border="1" width="100%">
+									<tr> <td> Tilte:{{ escape(idea["title"]) }} </td> </tr>
+									<tr> <td> Abstract:{{ escape(str(idea["abstract"])) }} </td> </tr>
+									<tr> <td> Time:{{ escape(idea["time"]) }} </td> </tr>
+								</table>
+								</td>
+							</tr>
+							</table>
+					</td></tr>	
+					<tr><td>
+							<table border="1" width="100%">
+							<tr>
+							<td> <img src= {{escape(idea["pic"][1])}} style="width:160px;height:160px;"> </td>
+							<td>Desc: {{ escape(idea["desc"]) }} </td>
+							</tr>
+							</table>
+					</td></tr>
+					<tr><td>
+							<table border="1" width="100%">
+							<tr>
+							<td>ID:{{ escape(str(idea["id"])) }} </td> 
+                            {{lastId = idea["id"] }}
+							<td> <input value="编辑" type=button onclick="window.location='admin?fmt=2&id={{ escape(str(idea["id"])) }}'"> </td>
+							</tr>
+							</table>
+					</td></tr>	
+				</table>
+			</td></tr>
 			{% end %}
+			<tr>
+			<td>
+				{% if len(ideas) !=0 %}
+				<a href="/admin?from={{lastId}}&num=10">下一页</a>
+				{% else %}
+				没有点子了!!!!
+				{% end %}
+			</td>
+			</tr>
 		</table>
 	</body>
 </html>

@@ -6,9 +6,10 @@ sys.path.append(filePath+"/ ../config")
 import utils , returnCode
 import json  , User , myConfig
 
+settings = dict(debug=True)
 
 class ListIdeaHandler(tornado.web.RequestHandler):
-    def get(self):
+	def render_list(self):
 		template_path=filePath+"/../template/admin/"
 		from_id = self.get_argument("from" , 0)
 		num = self.get_argument("num" , 10)
@@ -25,11 +26,60 @@ class ListIdeaHandler(tornado.web.RequestHandler):
 				for item in items :
 					list = []
 					list = item["pic"].split(";;")
+					if len(list) == 0:
+						list[0] = ""
+						list[1] = ""
+					if len(list) == 1:
+						list.append(list[0])
+					item["pic"] = list
+				self.render(template_path+"ideaList.html" ,host="http://"+self.request.host ,ideas=res["data"])
+
+		return 
+
+	def render_item(self):
+		template_path=filePath+"/../template/admin/"
+		idea_id = self.get_argument("id")
+		if not idea_id :
+			raise tornado.web.HTTPError(404)
+		else :
+			my_utils = utils.Utils()
+			res = my_utils.GetIdeaItem(idea_id)
+			if res == None :
+				raise tornado.web.HTTPError(404)
+			else :
+				self.set_header("Content-Type" , "text/html")
+				items = res["data"]
+				for item in items :
+					list = []
+					list = item["pic"].split(";;")
+					if len(list) == 0:
+						list.append("")
+						list.append("")
+					if len(list) == 1:
+						list.append(list[0])
 					item["pic"] = list
 				self.render(template_path+"ideaList.html" ,ideas=res["data"])
 		return 
 
+	def get(self):
+		fmt = int(self.get_argument("fmt" , 0))
+		if fmt == 2 :
+			self.render_item()
+		else :
+			self.render_list()
+		return 
+
 	def post(self):
+
+		id = self_getargument("id")
+		if not id :
+			raise tornado.web.HTTPError(404)
+		title = self_getargument("title")
+		desc = self_getargument("desc")
+		abstract = self_getargument("abstract")
+		my_utils =utils.Utils()
+		my_utils.update_idea()
+		return 
 
 
 class SubmitIdeaHandler(tornado.web.RequestHandler):
@@ -77,7 +127,7 @@ if __name__ == "__main__":
 #				(r"/login" , UserLoginHandler),
 #				(r"/reg", UserRegisterHandler) ,
 				(r"/admin", ListIdeaHandler) ,
-				], cookie_secret=myConfig.yueYouAiConfig.SECURE_KEY["key"])
+				], cookie_secret=myConfig.yueYouAiConfig.SECURE_KEY["key"] , **settings)
 	application.listen(int(sys.argv[1]))
 	tornado.ioloop.IOLoop.instance().start()
 
