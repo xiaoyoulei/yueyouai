@@ -29,6 +29,7 @@ class Utils():
 			idea_tmp["type"] = commonUtils.ThingType.IdeaType 
 			idea_tmp["title"] = idea["title"]
 			idea_tmp["desc"] = idea["content"]
+			idea_tmp["abstract"] = idea["abstract"]
 			idea_tmp["pic"] = idea["imgUrl"]
 			idea_tmp["time"] = idea["releaseTime"]
 			ideas.append(idea_tmp)
