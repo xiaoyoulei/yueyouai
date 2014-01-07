@@ -7,7 +7,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.tedyin.turbo.R;
-import com.turbo.TurboBaseActivity;
+import com.turbo.app.TurboBaseActivity;
 import com.turbo.common.CommonUtils;
 import com.turbo.widget.ShareUtil;
 

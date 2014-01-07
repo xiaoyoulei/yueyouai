@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@+id/chat_list_activity_listView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:dividerHeight="3dp"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@android:color/transparent"
+        android:listSelector="@android:color/transparent" />
+
+    <!-- 底部菜单栏 -->
+
+    <LinearLayout
+        android:id="@+id/chat_list_activity_bottom_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:gravity="center_vertical">
+
+        <!-- 表情按钮 -->
+        <Button
+            android:id="@+id/chat_list_activity_bottom_icon_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="icon" />
+
+        <!-- 更多按钮 -->
+
+        <Button
+            android:id="@+id/chat_list_activity_bottom_more_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="more" />
+
+        <!-- 输入框 -->
+        <EditText
+            android:id="@+id/chat_list_activity_bottom_editText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <!-- 发送按钮 -->
+
+            <Button
+                android:id="@+id/chat_list_activity_bottom_sendButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="send"
+                android:visibility="invisible" />
+            <!-- 语音输入按钮 -->
+
+            <Button
+                android:id="@+id/chat_list_activity_bottom_voiceButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="voice" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- 底部隐藏菜单 -->
+
+    <LinearLayout
+        android:id="@+id/chat_list_activity_bottom_invisible_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <GridView
+            android:id="@+id/chat_list_activity_bottom_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="4" />
+    </LinearLayout>
+
+</LinearLayout>

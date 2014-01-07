@@ -8,13 +8,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="25dp"
         android:orientation="vertical" >
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <ImageView
+                android:id="@+id/left_top_user_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_launcher"
+                android:minHeight="72dp"
+                android:minWidth="72dp" />
+            
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/head_cover_profile_yiliao"
+                android:minHeight="72dp"
+                android:minWidth="72dp" />
 
-        <ImageView
-            android:layout_width="wrap_content"
+           
+        </FrameLayout>
+        
+        <TextView
+            android:layout_marginTop="20dp"
+            android:id="@+id/left_top_userName_text"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/ic_launcher" />
+            android:layout_width="match_parent"
+            android:textSize="13sp"
+            android:gravity="center"
+            android:text="Annie" 
+            />
     </LinearLayout>
 
     <LinearLayout
@@ -35,13 +62,33 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="关 于" />
-        
-        
+
         <Button
             android:id="@+id/left_btn3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="分 享" />
+        
+        
+        <Button
+            android:id="@+id/left_btn4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="设 置" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="36dp"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/left_btn4"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="赞助我们" />
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

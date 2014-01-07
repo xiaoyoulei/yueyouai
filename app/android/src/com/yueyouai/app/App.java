@@ -1,8 +1,6 @@
 package com.yueyouai.app;
 
-import com.turbo.TurboBaseApp;
-import com.turbo.data.SharedPerferencesHelper;
-import com.yueyouai.app.data.Constant;
+import com.turbo.app.TurboBaseApp;
 
 public class App extends TurboBaseApp {
 	@Override

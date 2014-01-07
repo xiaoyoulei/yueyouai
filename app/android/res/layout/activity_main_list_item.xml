@@ -15,11 +15,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/ic_launcher"
             android:maxHeight="96dp"
+            android:minWidth="72dp"
             android:maxWidth="96dp"
-            android:minHeight="72dp"
-            android:minWidth="72dp" />
+            android:minHeight="72dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="点子记录等的标题"
-                android:textSize="13sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -42,13 +41,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="点子的介绍信息"
-                android:textSize="9sp" />
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/main_item_author_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+                android:layout_marginRight="8dp"
                 android:gravity="end"
                 android:text="\@作者:"
                 android:textSize="11sp" />

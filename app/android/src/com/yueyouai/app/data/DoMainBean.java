@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.turbo.data.SharedPerferencesHelper;
+
 /**
  * 首页数据
  * 
@@ -14,7 +16,7 @@ import org.json.JSONObject;
  */
 public class DoMainBean {
 
-	private int nowid; 							// 当前数据中最后一个id ，整型数
+	private int last_time; 						// 数据中的最小的时间
 	private int id; 							// 标识字段
 	private int type; 							// 1/2/3 (对应点子，事件，点评) 建议不要混入点评
 	private String title; 						// 标题(256byte)
@@ -22,12 +24,12 @@ public class DoMainBean {
 	private String thumbnail; 					// Icon Url
 	private String picUrl; 						// 大图Url
 
-	public int getNowid() {
-		return nowid;
+	public int getLast_time() {
+		return last_time;
 	}
 
-	public void setNowid(int nowid) {
-		this.nowid = nowid;
+	public void setLast_time(int last_time) {
+		this.last_time = last_time;
 	}
 
 	public int getId() {
@@ -87,8 +89,11 @@ public class DoMainBean {
 		List<DoMainBean> list = new ArrayList<DoMainBean>();
 		try {
 			JSONObject jsonObj = new JSONObject(jsonStr);
-			if (!jsonObj.has("nowid"))
+			if (!jsonObj.has("last_time"))
 				return null;
+			else
+				SharedPerferencesHelper.newInstance().writeString("last_time", jsonObj.getString("last_time"));
+			
 			if (jsonObj.has("data")) {
 				JSONArray array = jsonObj.getJSONArray("data");
 				for (int i = 0; i < array.length(); i++) {

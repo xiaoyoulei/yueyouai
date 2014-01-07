@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.turbo.volley.toolbox.NetworkImageView;
 import com.turbo.net.VolleyNetHelper;
 import com.yueyouai.app.R;
+import com.yueyouai.app.data.Constant;
 import com.yueyouai.app.data.DoMainBean;
 
 /**
@@ -73,11 +74,36 @@ public class DoMainAdapter extends BaseAdapter {
 		holder.titleText.setText(bean.getTitle());
 		holder.introduceText.setText(bean.getDesc());
 		String imageUrl = bean.getThumbnail();
-		holder.image.setErrorImageResId(R.drawable.ic_launcher);
+		initImage(holder.image, bean.getType());
 		holder.image.setImageUrl(imageUrl, helper.getImageLoader(mContext));
 		holder.image.startAnimation(AnimationUtils.loadAnimation(mContext,
 				R.anim.dock_menu_fadein));
 		return convertView;
+	}
+	
+	/**
+	 * 根据数据类型初始化ImageView
+	 * @param image
+	 * @param type
+	 */
+	private void initImage(NetworkImageView image,int type){
+		switch (type) {
+		case Constant.DATA_TYPE_IDEA:
+			//点子
+			image.setErrorImageResId(R.drawable.default_idea_error);
+			break;
+		case Constant.DATA_TYPE_RECORD:
+			//记录
+			image.setErrorImageResId(R.drawable.default_record_error);
+			break;
+		case Constant.DATA_TYPE_COMMENT:
+			//评论
+			image.setErrorImageResId(R.drawable.default_comment_error);
+			break;
+		default:
+			
+			break;
+		}
 	}
 
 	static class ViewHolder {
