@@ -29,6 +29,32 @@ class Utils():
 			idea_tmp["type"] = commonUtils.ThingType.IdeaType 
 			idea_tmp["title"] = idea["title"]
 			idea_tmp["desc"] = idea["content"]
+			idea_tmp["abstract"] = idea["abstract"]
+			idea_tmp["pic"] = idea["imgUrl"]
+			idea_tmp["time"] = idea["releaseTime"]
+			ideas.append(idea_tmp)
+		res = {}
+		res["nowid"] = min_id
+		res["data"] = ideas
+		return res
+
+	def GetIdeaItem(self , idea_id ):
+
+		ideaList = self.ideaDao.GetIdeaItem(idea_id)
+
+		ideas = []
+		min_id = 0
+		for idea in ideaList:
+			if idea["status"] != 0 :
+				continue 
+			idea_tmp = {}
+			idea_tmp["id"] = idea["iid"]
+			if  min_id > idea_tmp["id"] or min_id == 0:
+				min_id = idea_tmp["id"]
+			idea_tmp["type"] = commonUtils.ThingType.IdeaType 
+			idea_tmp["title"] = idea["title"]
+			idea_tmp["desc"] = idea["content"]
+			idea_tmp["abstract"] = idea["abstract"]
 			idea_tmp["pic"] = idea["imgUrl"]
 			idea_tmp["time"] = idea["releaseTime"]
 			ideas.append(idea_tmp)

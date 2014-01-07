@@ -86,6 +86,9 @@ class IdeaDAO:
 		conn.close() 
 		return ideaList
 
+	def GetIdeaItem(self , idea_id):
+		mysqlStr = "SELECT iid,title,abstract,content,imgUrl,userLove,userHate,status,uid,releaseTime FROM TblIdea  WHERE status=0 and iid = %d " % int(idea_id)
+		return self.GetIdeaList(mysqlStr)
 	# --------function GetIdeaList end -----
 	# --------function GetTopIdeaByTime start -----
 	def GetTopIdeaByTime(self,topNum):
