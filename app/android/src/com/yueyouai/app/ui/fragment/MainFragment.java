@@ -56,7 +56,6 @@ public class MainFragment extends Fragment{
 	private List<DoMainBean> mainData = new ArrayList<DoMainBean>();
 	private DoMainAdapter adapter;
 
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -107,7 +106,6 @@ public class MainFragment extends Fragment{
 	
 	/**
 	 * 下拉监听刷新首页数据
-	 * 
 	 * @author Ted
 	 */
 	private class OnRefreshL implements OnRefreshListener {
@@ -127,8 +125,9 @@ public class MainFragment extends Fragment{
 			params.put("num", Constant.DATA_STEP_NUM + "");
 			url = URLHelper.buildUrl(Constant.URL_DO_MAIN, params);
 		} else {
-			int from = mainData.get(0).getId();
-			params.put("from", from + "");
+			//加载更多的数据
+			String from_time = SharedPerferencesHelper.newInstance().readString("last_time");
+			params.put("from_time", from_time);
 			params.put("num", Constant.DATA_STEP_NUM + "");
 			url = URLHelper.buildUrl(Constant.URL_DO_MAIN, params);
 		}
@@ -147,12 +146,7 @@ public class MainFragment extends Fragment{
 			HotelMessageBean.parseMessage(resp.toString());
 			mainData.addAll(0, data);
 			mPullToRefreshAttacher.setRefreshComplete();
-			if (mainData.size() > 0) {
-				int currentNum = SharedPerferencesHelper.newInstance().readInt(
-						Constant.KEY_CURRENT_ITEM_NUM);
-				SharedPerferencesHelper.newInstance().writeInt(
-						Constant.KEY_CURRENT_ITEM_NUM,
-						currentNum + mainData.size());
+			if (data.size() > 0) {
 				adapter.notifyDataSetChanged();
 				TurboToast.showMsg(activity, "更新了" + data.size() + "条数据");
 			} else {
@@ -181,14 +175,10 @@ public class MainFragment extends Fragment{
 			ArrayList<DoMainBean> data = (ArrayList<DoMainBean>) DoMainBean
 					.parse(resp.toString());
 			mainData.addAll(data);
-			if (mainData.size() > 0) {
-				int currentNum = SharedPerferencesHelper.newInstance().readInt(
-						Constant.KEY_CURRENT_ITEM_NUM);
-				SharedPerferencesHelper.newInstance().writeInt(
-						Constant.KEY_CURRENT_ITEM_NUM,
-						currentNum + mainData.size());
+			if (data.size() > 0) {
 				adapter.notifyDataSetChanged();
 			} else {
+				TurboToast.showMsg(activity, "已加载完全部！");
 				loadingFooter.setState(State.TheEnd);
 			}
 		}

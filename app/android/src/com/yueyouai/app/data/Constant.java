@@ -26,11 +26,16 @@ public interface Constant {
 	/** 每次获取的Data的条数*/
 	public static final int DATA_STEP_NUM = 10;
 	
-	/** 当前消息数量*/
-	public static final String KEY_CURRENT_ITEM_NUM = "KEY_CURRENT_ITEM_NUM";
-	
 	/** 数据类型：  1/2/3 (对应点子，事件，点评)*/
 	public static final int DATA_TYPE_IDEA = 1;
 	public static final int DATA_TYPE_RECORD = 2;
 	public static final int DATA_TYPE_COMMENT = 3;
+	
+	/** 注册登录等返回的状态数据*/
+	public static final String KEY_USERNAME = "username";
+	public static final String KEY_MAIL = "mail";
+	public static final String KEY_INFO = "info";
+	
+	/** 请求成功*/
+	public static final int RESPONSE_STATUS_SUCCESS = 1000;
 }

@@ -16,7 +16,7 @@ import com.turbo.data.SharedPerferencesHelper;
  */
 public class DoMainBean {
 
-	private int last_time; 						// 数据中的最小的时间
+//	private int last_time; 						// 数据中的最小的时间
 	private int id; 							// 标识字段
 	private int type; 							// 1/2/3 (对应点子，事件，点评) 建议不要混入点评
 	private String title; 						// 标题(256byte)
@@ -24,13 +24,13 @@ public class DoMainBean {
 	private String thumbnail; 					// Icon Url
 	private String picUrl; 						// 大图Url
 
-	public int getLast_time() {
-		return last_time;
-	}
-
-	public void setLast_time(int last_time) {
-		this.last_time = last_time;
-	}
+//	public int getLast_time() {
+//		return last_time;
+//	}
+//
+//	public void setLast_time(int last_time) {
+//		this.last_time = last_time;
+//	}
 
 	public int getId() {
 		return id;
