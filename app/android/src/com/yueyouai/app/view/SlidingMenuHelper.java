@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.turbo.data.SharedPerferencesHelper;
 import com.turbo.view.TurboToast;
 import com.yueyouai.app.R;
 import com.yueyouai.app.ui.LoginActivity;
@@ -21,8 +21,6 @@ public class SlidingMenuHelper {
 	private static SlidingMenu sm;
 	private static Activity mActivity;
 	
-	
-	
 	private SlidingMenuHelper(){
 	}
 	
@@ -34,7 +32,7 @@ public class SlidingMenuHelper {
 	public static SlidingMenu initSlidingMenu(Activity activity){
 		mActivity = activity;
 		sm = new SlidingMenu(mActivity);
-		sm.attachToActivity(mActivity, SlidingMenu.SLIDING_WINDOW, true);
+		sm.attachToActivity(mActivity, SlidingMenu.SLIDING_WINDOW, false);
 		sm.setShadowWidthRes(R.dimen.shadow_width);
 		sm.setShadowDrawable(R.drawable.shadow);
 		sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);

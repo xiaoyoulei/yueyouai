@@ -13,8 +13,8 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
-            <ImageView
-                android:id="@+id/left_top_user_photo"
+            <com.turbo.volley.toolbox.NetworkImageView
+                android:id="@+id/left_top_user_photo_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

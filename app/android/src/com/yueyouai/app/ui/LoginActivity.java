@@ -1,15 +1,5 @@
 package com.yueyouai.app.ui;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,11 +16,21 @@ import com.turbo.common.CyptoUtils;
 import com.turbo.data.SharedPerferencesHelper;
 import com.turbo.data.StringHelper;
 import com.turbo.net.VolleyNetHelper.NetCallBack;
+import com.turbo.net.impl.TurboJSONResponse;
 import com.turbo.view.TurboLoadingDialog;
 import com.turbo.view.TurboToast;
 import com.yueyouai.app.App;
 import com.yueyouai.app.R;
 import com.yueyouai.app.data.Constant;
+
+import org.apache.http.ParseException;
+import org.apache.http.cookie.Cookie;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class LoginActivity extends TurboBaseActivity implements OnClickListener {
 
@@ -83,6 +83,11 @@ public class LoginActivity extends TurboBaseActivity implements OnClickListener 
 				R.id.act_login_psw_again_edit_text));
 		mailText.addTextChangedListener(new EditorListener(
 				R.id.act_register_mail_edit_text));
+
+		// 如果用户登录过，则自动填充文本框
+		String userName = SharedPerferencesHelper.newInstance().readString(
+				"username");
+		userNameText.setText(userName);
 	}
 
 	@Override
@@ -99,17 +104,6 @@ public class LoginActivity extends TurboBaseActivity implements OnClickListener 
 		}
 	}
 
-//	/**
-//	 * 处理并保存Token
-//	 */
-//	private void saveToken(String tempToken) {
-//		// TODO: 此处得到的不是真正的Cookie，需要进一步处理
-//		Log.e("Ted", tempToken);
-//		System.out.println(tempToken);
-//		SharedPerferencesHelper.newInstance().writeString(Constant.COOKIE,
-//				tempToken);
-//	}
-
 	/**
 	 * 登录
 	 */
@@ -119,7 +113,8 @@ public class LoginActivity extends TurboBaseActivity implements OnClickListener 
 			mailText.startAnimation(AnimationUtils.loadAnimation(activity,
 					R.anim.dock_menu_fadeout));
 			pswAgainText.setVisibility(View.GONE);
-			pswAgainText.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.dock_menu_fadeout));
+			pswAgainText.startAnimation(AnimationUtils.loadAnimation(activity,
+					R.anim.dock_menu_fadeout));
 		}
 
 		TurboLoadingDialog.loading(activity, "正在登录...");
@@ -128,12 +123,13 @@ public class LoginActivity extends TurboBaseActivity implements OnClickListener 
 		final Map<String, String> map = new HashMap<String, String>();
 		map.put("username", userName);
 		map.put("psw", CyptoUtils.MD5(password));
-		new Thread() {
-			public void run() {
-				App.getNetHellper().doSyncBasePost(Constant.URL_LOGIN, map,
-						new DoLoginCallBack());
-			};
-		}.start();
+//		new Thread() {
+//			public void run() {
+//				App.getNetHellper().doSyncBasePost(Constant.URL_LOGIN, map,
+//						new DoLoginCallBack());
+//			};
+//		}.start();
+		App.getNetHellper().doTurboJSONPost(Constant.URL_LOGIN, map, null, new DoLoginCallBack());
 	}
 
 	/**
@@ -151,12 +147,13 @@ public class LoginActivity extends TurboBaseActivity implements OnClickListener 
 			map.put("username", userName);
 			map.put("psw", CyptoUtils.MD5(password));
 			map.put("mail", mail);
-			new Thread() {
-				public void run() {
-					App.getNetHellper().doSyncBasePost(Constant.URL_REGISTER,
-							map, new DoRegisterCallBack());
-				};
-			}.start();
+//			new Thread() {
+//				public void run() {
+//					App.getNetHellper().doSyncBasePost(Constant.URL_REGISTER,
+//							map, new DoRegisterCallBack());
+//				};
+//			}.start();
+			App.getNetHellper().doTurboJSONPost(Constant.URL_REGISTER, map, null, new DoRegisterCallBack());
 		} else {
 			// 显示Email文本框
 			pswAgainText.setVisibility(View.VISIBLE);
@@ -175,46 +172,66 @@ public class LoginActivity extends TurboBaseActivity implements OnClickListener 
 	 * 
 	 * @author Ted
 	 */
-	private class DoLoginCallBack implements NetCallBack<HttpResponse> {
+	private class DoLoginCallBack implements NetCallBack<TurboJSONResponse> {
 		@Override
 		public void onError(String errorMsg) {
 			TurboLoadingDialog.endLoading();
 			TurboToast.showMsg(activity, errorMsg);
-			//TODO:根据错误码，确定错误类型！
-			passwordText.setError("账号或密码错误！");
 		}
 
 		@Override
-		public void onSuccess(HttpResponse resp) {
+		public void onSuccess(TurboJSONResponse jsonResp) {
 			try {
-				String jsonStr = EntityUtils.toString(resp.getEntity());
-				JSONObject obj = new JSONObject(jsonStr);
+				TurboLoadingDialog.endLoading();
+				JSONObject obj = jsonResp.take();
 				final int status = obj.getInt("status");
-				final String info = obj.getString("info");
-				if(status == Constant.RESPONSE_STATUS_SUCCESS){
-					//登录成功后保存Cookie
-					SharedPerferencesHelper.newInstance().writeString(Constant.COOKIE, resp.getHeaders(Constant.COOKIE).toString());
-					//保存密码
-					SharedPerferencesHelper.newInstance().writeString("psw", CyptoUtils.MD5(passwordText.getText().toString()));
-					//进入应用首页
+				if (status == Constant.RESPONSE_STATUS_SUCCESS) {
+					// 登录成功后保存Cookie
+                    List<Cookie> cookies = jsonResp.getCookies();
+                    for(Cookie cookie : cookies){
+                        if(Constant.COOKIE.equals(cookie.getName())){
+                            SharedPerferencesHelper.newInstance().writeString(Constant.COOKIE, cookie.getValue());
+                            break;
+                        }
+                    }
+					// 保存用户名
+					SharedPerferencesHelper.newInstance().writeString(
+							"username", userNameText.getText().toString());
+					// 保存密码
+					SharedPerferencesHelper.newInstance().writeString("psw",
+							CyptoUtils.MD5(passwordText.getText().toString()));
+					// 进入应用首页
 					Intent intent = new Intent();
 					intent.setClass(activity, MainActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 					startActivity(intent);
 					activity.finish();
-				}else{
-					//登录不成功，从info中读出错误信息
-					runOnUiThread(new Runnable() {
-						public void run() {
-							TurboToast.showMsg(activity, "状态码："+status+" 错误信息："+info);
-						}
-					});
+				} else {
+					// 登录不成功，从info中读出错误信息
+					final String info = "用户名或密码错误！";
+//					if (obj.has("info"))
+//						info = obj.getString("info");
+					TurboToast.showMsg(activity, "状态码：" + status + " 错误信息："
+							+ info);
+					
+					switch (status) {
+					case 2001:	//从文档中读取
+						// 用户名或密码错误
+						activity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								passwordText.setError(info);
+								passwordText.requestFocus();
+							}
+						});
+						break;
+					default:
+						break;
+					}
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			} catch (ParseException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -225,48 +242,55 @@ public class LoginActivity extends TurboBaseActivity implements OnClickListener 
 	 * 
 	 * @author Ted
 	 */
-	private class DoRegisterCallBack implements NetCallBack<HttpResponse> {
+	private class DoRegisterCallBack implements NetCallBack<TurboJSONResponse> {
 		@Override
-		public void onSuccess(HttpResponse resp) {
+		public void onSuccess(TurboJSONResponse jsonResp) {
 			try {
-				String jsonStr = EntityUtils.toString(resp.getEntity());
-				JSONObject obj = new JSONObject(jsonStr);
+				TurboLoadingDialog.endLoading();
+				JSONObject obj = jsonResp.take();
 				final int status = obj.getInt("status");
-				final String info = obj.getString("info");
-				if(status == Constant.RESPONSE_STATUS_SUCCESS){
-					//注册成功后保存Cookie
-					SharedPerferencesHelper.newInstance().writeString(Constant.COOKIE, resp.getHeaders(Constant.COOKIE).toString());
-					//保存用户名
-					SharedPerferencesHelper.newInstance().writeString("username", obj.getString("username"));
-					//保存邮箱账号
-					SharedPerferencesHelper.newInstance().writeString("mail", obj.getString("mail"));
-					//保存密码
-					SharedPerferencesHelper.newInstance().writeString("psw", CyptoUtils.MD5(passwordText.getText().toString()));
-					
-					//进入应用首页
+				if (status == Constant.RESPONSE_STATUS_SUCCESS) {
+					// 注册成功后保存Cookie
+                    List<Cookie> cookies = jsonResp.getCookies();
+                    for(Cookie cookie : cookies){
+                        if(Constant.COOKIE.equals(cookie.getName())){
+                            SharedPerferencesHelper.newInstance().writeString(Constant.COOKIE, cookie.getValue());
+                            break;
+                        }
+                    }
+					// 保存用户名
+					SharedPerferencesHelper.newInstance().writeString(
+							"username", obj.getString("username"));
+					// 保存邮箱账号
+					SharedPerferencesHelper.newInstance().writeString("mail",
+							obj.getString("mail"));
+					// 保存密码
+					SharedPerferencesHelper.newInstance().writeString("psw",
+							CyptoUtils.MD5(passwordText.getText().toString()));
+					// 进入应用首页
+					TurboToast.showMsg(activity, "恭喜您注册成功！");
 					Intent intent = new Intent();
 					intent.setClass(activity, MainActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 					startActivity(intent);
-					TurboToast.showMsg(activity, "恭喜您注册成功！");
 					activity.finish();
-				}else{
-					//注册不成功，从info中读出错误信息
-					runOnUiThread(new Runnable() {
-						public void run() {
-							TurboToast.showMsg(activity, "状态码："+status+" 错误信息："+info);
-						}
-					});
+				} else {
+					// 注册不成功，从info中读出错误信息
+					String info = "";
+					if (obj.has("info"))
+						info = obj.getString("info");
+					TurboToast.showMsg(activity, "状态码：" + status + " 错误信息："
+							+ info);
 				}
-				TurboLoadingDialog.endLoading();
 			} catch (ParseException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JSONException e) {
 				e.printStackTrace();
+			} finally {
+				TurboLoadingDialog.endLoading();
 			}
 		}
+
 		@Override
 		public void onError(String errorMsg) {
 			TurboLoadingDialog.endLoading();
@@ -335,7 +359,7 @@ public class LoginActivity extends TurboBaseActivity implements OnClickListener 
 				if (mailText.getVisibility() == View.VISIBLE) {
 					userNameText.setError("用户名为4~18为数字和字母组合");
 				} else {
-//					userNameText.setError("账号输入有误");
+					// userNameText.setError("账号输入有误");
 				}
 			}
 		}
@@ -355,7 +379,7 @@ public class LoginActivity extends TurboBaseActivity implements OnClickListener 
 				if (mailText.getVisibility() == View.VISIBLE) {
 					passwordText.setError("密码由6~18位数字字母组合");
 				} else {
-//					passwordText.setError("密码输入有误！");
+					// passwordText.setError("密码输入有误！");
 				}
 			}
 		}
@@ -369,7 +393,7 @@ public class LoginActivity extends TurboBaseActivity implements OnClickListener 
 			if (pswAgain != null
 					&& pswAgain.equals(passwordText.getText().toString())) {
 				mailText.setEnabled(true);
-			}else{
+			} else {
 				pswAgainText.setError("输入的密码不同！");
 			}
 		}
