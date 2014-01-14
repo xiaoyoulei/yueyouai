@@ -1,15 +1,6 @@
+
 package com.yueyouai.app.ui.fragment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONObject;
-
-import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshAttacher;
-import uk.co.senab.actionbarpulltorefresh.library.OtherTouchListener;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -24,6 +15,7 @@ import android.widget.ListView;
 import com.turbo.common.URLHelper;
 import com.turbo.data.SharedPerferencesHelper;
 import com.turbo.net.VolleyNetHelper.NetCallBack;
+import com.turbo.net.impl.TurboJSONResponse;
 import com.turbo.view.TurboLoadingFooter;
 import com.turbo.view.TurboLoadingFooter.State;
 import com.turbo.view.TurboToast;
@@ -31,228 +23,244 @@ import com.yueyouai.app.App;
 import com.yueyouai.app.R;
 import com.yueyouai.app.data.Constant;
 import com.yueyouai.app.data.DoMainBean;
-import com.yueyouai.app.data.HotelMessageBean;
 import com.yueyouai.app.ui.adapter.DoMainAdapter;
 import com.yueyouai.app.view.DockViewHelper;
 import com.yueyouai.app.view.PullToRefreshHelper;
+
+import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshAttacher;
+import uk.co.senab.actionbarpulltorefresh.library.OtherTouchListener;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 首页数据
  * @author Ted
  */
-public class MainFragment extends Fragment{
-	
-	/** View控件*/
-	private ListView listView;
-	private TurboLoadingFooter loadingFooter;
-	private DockViewHelper dockViewHelper;
-	
-	/** 全局变量*/
-	private Activity activity;
-	private OnRefreshL refreshListener;
-	private PullToRefreshAttacher mPullToRefreshAttacher;
+public class MainFragment extends Fragment {
 
-	/** 数据源*/
-	private List<DoMainBean> mainData = new ArrayList<DoMainBean>();
-	private DoMainAdapter adapter;
+    /** View控件 */
+    private ListView listView;
+    private TurboLoadingFooter loadingFooter;
+    private DockViewHelper dockViewHelper;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_main, null);
-		return view;
-	}
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		init();
-	}
-	
-	private void init() {
-		activity = getActivity();
-		dockViewHelper = new DockViewHelper(activity);
-		loadingFooter = new TurboLoadingFooter(activity);
-		initListView();
-		initActionBar();
-		initPullToRefresh();
-		loadData(new LoadMoreDoMainNetCallBack());
-	}
+    /** 全局变量 */
+    private Activity activity;
+    private OnRefreshL refreshListener;
+    private PullToRefreshAttacher mPullToRefreshAttacher;
 
-	/**
-	 * 初始化ListView
-	 */
-	private void initListView() {
-		listView = (ListView) activity.findViewById(R.id.listView);
-		listView.addFooterView(loadingFooter.getView());
-		adapter = new DoMainAdapter(activity, mainData, App.getNetHellper());
-		listView.setAdapter(adapter);
-		listView.setDividerHeight(18);
-		// 添加事件监听
-		listView.setOnScrollListener(new OnScrollL());
-	}
+    /** 数据源 */
+    private List<DoMainBean> mainData = new ArrayList<DoMainBean>();
+    private DoMainAdapter adapter;
 
-	/** 初始化ActionBar */
-	private void initActionBar() {}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_main, null);
+        return view;
+    }
 
-	/**
-	 * 初始化下拉刷新控件
-	 */
-	private void initPullToRefresh() {
-		refreshListener = new OnRefreshL();
-		mPullToRefreshAttacher = PullToRefreshHelper.initPullToRefresh(
-				activity, listView, refreshListener,new DockMenuL());
-	}
-	
-	/**
-	 * 下拉监听刷新首页数据
-	 * @author Ted
-	 */
-	private class OnRefreshL implements OnRefreshListener {
-		@Override
-		public void onRefreshStarted(View view) {
-			loadData(new RefreshDoMainNetCallBack());
-		}
-	}
-	
-	/**
-	 * 加载数据
-	 */
-	private void loadData(NetCallBack<JSONObject> callBack) {
-		String url = "";
-		Map<String, String> params = new HashMap<String, String>();
-		if (mainData == null || mainData.size() == 0) {
-			params.put("num", Constant.DATA_STEP_NUM + "");
-			url = URLHelper.buildUrl(Constant.URL_DO_MAIN, params);
-		} else {
-			//加载更多的数据
-			String from_time = SharedPerferencesHelper.newInstance().readString("last_time");
-			params.put("from_time", from_time);
-			params.put("num", Constant.DATA_STEP_NUM + "");
-			url = URLHelper.buildUrl(Constant.URL_DO_MAIN, params);
-		}
-		App.getNetHellper().doJsonGet(activity, url, null, callBack);
-	}
-	
-	/**
-	 * 刷新首页数据的网络回调
-	 * @author Ted
-	 */
-	private class RefreshDoMainNetCallBack implements NetCallBack<JSONObject> {
-		@Override
-		public void onSuccess(JSONObject resp) {
-			ArrayList<DoMainBean> data = (ArrayList<DoMainBean>) DoMainBean
-					.parse(resp.toString());
-			HotelMessageBean.parseMessage(resp.toString());
-			mainData.addAll(0, data);
-			mPullToRefreshAttacher.setRefreshComplete();
-			if (data.size() > 0) {
-				adapter.notifyDataSetChanged();
-				TurboToast.showMsg(activity, "更新了" + data.size() + "条数据");
-			} else {
-				TurboToast.showMsg(activity, "已加载完全部！");
-				loadingFooter.setState(State.TheEnd);
-			}
-		}
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        init();
+    }
 
-		@Override
-		public void onError(String errorMsg) {
-			TurboToast.showMsg(activity, errorMsg);
-			listView.removeFooterView(loadingFooter.getView());
-		}
-	}
+    private void init() {
+        activity = getActivity();
+        dockViewHelper = new DockViewHelper(activity);
+        loadingFooter = new TurboLoadingFooter(activity);
+        initListView();
+        initActionBar();
+        initPullToRefresh();
+        loadData(new LoadMoreDoMainNetCallBack());
+    }
 
-	/**
-	 * 加载更多首页数据
-	 * 
-	 * TODO:此处逻辑需要修改
-	 * 
-	 * @author Ted
-	 */
-	private class LoadMoreDoMainNetCallBack implements NetCallBack<JSONObject> {
-		@Override
-		public void onSuccess(JSONObject resp) {
-			ArrayList<DoMainBean> data = (ArrayList<DoMainBean>) DoMainBean
-					.parse(resp.toString());
-			mainData.addAll(data);
-			if (data.size() > 0) {
-				adapter.notifyDataSetChanged();
-			} else {
-				TurboToast.showMsg(activity, "已加载完全部！");
-				loadingFooter.setState(State.TheEnd);
-			}
-		}
+    /**
+     * 初始化ListView
+     */
+    private void initListView() {
+        listView = (ListView) activity.findViewById(R.id.listView);
+        listView.addFooterView(loadingFooter.getView());
+        adapter = new DoMainAdapter(activity, mainData, App.getNetHellper());
+        listView.setAdapter(adapter);
+        listView.setDividerHeight(18);
+        // 添加事件监听
+        listView.setOnScrollListener(new OnScrollL());
+    }
 
-		@Override
-		public void onError(String errorMsg) {
-			TurboToast.showMsg(activity, errorMsg);
-		}
-	}
+    /** 初始化ActionBar */
+    private void initActionBar() {
+    }
 
-	/**
-	 * 加载更多数据监听器
-	 * 
-	 * @author Ted
-	 */
-	private class OnScrollL implements OnScrollListener {
+    /**
+     * 初始化下拉刷新控件
+     */
+    private void initPullToRefresh() {
+        refreshListener = new OnRefreshL();
+        mPullToRefreshAttacher = PullToRefreshHelper.initPullToRefresh(
+                activity, listView, refreshListener, new DockMenuL());
+    }
 
-		@Override
-		public void onScrollStateChanged(AbsListView view, int scrollState) {
-			if (isScrollEnd(view, loadingFooter.getView())) {
-				loadData(new LoadMoreDoMainNetCallBack());
-			}
-		}
+    /**
+     * 下拉监听刷新首页数据
+     * 
+     * @author Ted
+     */
+    private class OnRefreshL implements OnRefreshListener {
+        @Override
+        public void onRefreshStarted(View view) {
+            loadData(new RefreshDoMainNetCallBack());
+        }
+    }
 
-		@Override
-		public void onScroll(AbsListView view, int firstVisibleItem,
-				int visibleItemCount, int totalItemCount) {
-		}
+    /**
+     * 加载数据
+     */
+    private void loadData(NetCallBack<TurboJSONResponse> callBack) {
+        String url = "";
+        Map<String, String> params = new HashMap<String, String>();
+        if (mainData == null || mainData.size() == 0) {
+            params.put("num", Constant.DATA_STEP_NUM + "");
+            url = URLHelper.buildUrl(Constant.URL_DO_MAIN, params);
+        } else {
+            // 加载更多的数据
+            String from_time = SharedPerferencesHelper.newInstance().readString("last_time");
+            params.put("from_time", from_time);
+            params.put("num", Constant.DATA_STEP_NUM + "");
+            url = URLHelper.buildUrl(Constant.URL_DO_MAIN, params);
+        }
+        Map<String, String> headers = new HashMap<String, String>();
+        String token = SharedPerferencesHelper.newInstance().readString(Constant.COOKIE);
+        headers.put(Constant.COOKIE, token);
+        // App.getNetHellper().doJsonGet(activity, url, null, callBack);
+        App.getNetHellper().doTurboJSONGet(url, headers, callBack);
+    }
 
-		/**
-		 * 判断ScrollView是否滚动到最底部（以targetView为参考） 判断是滚动到底部
-		 * 
-		 * @param view
-		 * @param targetView
-		 * @return
-		 */
-		private boolean isScrollEnd(AbsListView view, View targetView) {
-			boolean scrollEnd = false;
-			try {
-				if (view.getPositionForView(targetView) == view
-						.getLastVisiblePosition())
-					scrollEnd = true;
-			} catch (Exception e) {
-				scrollEnd = false;
-			}
-			return scrollEnd;
-		}
-	}
+    /**
+     * 刷新首页数据的网络回调
+     * 
+     * @author Ted
+     */
+    private class RefreshDoMainNetCallBack implements NetCallBack<TurboJSONResponse> {
+        @Override
+        public void onSuccess(TurboJSONResponse jsonResp) {
+            ArrayList<DoMainBean> data = (ArrayList<DoMainBean>) DoMainBean
+                    .parse(jsonResp.take().toString());
+            mPullToRefreshAttacher.setRefreshComplete();
+            if (data != null && data.size() > 0) {
+                mainData.addAll(0, data);
+                adapter.notifyDataSetChanged();
+                TurboToast.showMsg(activity, "更新了" + data.size() + "条数据");
+            } else {
+                TurboToast.showMsg(activity, "已加载完全部！");
+                loadingFooter.setState(State.TheEnd);
+                listView.removeFooterView(loadingFooter.getView());
+            }
+        }
 
-	/**
-	 * 打开关闭DockMenu的监听器
-	 * @author Ted
-	 */
-	private class DockMenuL implements OtherTouchListener {
-		float y1 = 0;
-		float y2 = 0;
-		float Ydelta = 0;
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				y1 = event.getY();
-			}
-			if (event.getAction() == MotionEvent.ACTION_UP) {
-				y2 = event.getY();
-				Ydelta = y2 - y1;
-				if (Ydelta > 10) {
-					// 向下滑动时，显示DockMenu
-					dockViewHelper.showDockMenu();
-				} else if (Ydelta < -10) {
-					// 向上滑动时，因此DockMenu
-					dockViewHelper.closeDockMenu();
-				}
-			}
-			return true;
-		}
-	}
+        @Override
+        public void onError(String errorMsg) {
+            TurboToast.showMsg(activity, errorMsg);
+            listView.removeFooterView(loadingFooter.getView());
+        }
+    }
+
+    /**
+     * 加载更多首页数据
+     * 
+     * @author Ted
+     */
+    private class LoadMoreDoMainNetCallBack implements NetCallBack<TurboJSONResponse> {
+        @Override
+        public void onSuccess(TurboJSONResponse jsonResp) {
+            ArrayList<DoMainBean> data = (ArrayList<DoMainBean>) DoMainBean
+                    .parse(jsonResp.take().toString());
+            if (data != null && data.size() > 0) {
+                mainData.addAll(data);
+                adapter.notifyDataSetChanged();
+            } else {
+                TurboToast.showMsg(activity, "已加载完全部！");
+                loadingFooter.setState(State.TheEnd);
+                listView.removeFooterView(loadingFooter.getView());
+            }
+        }
+
+        @Override
+        public void onError(String errorMsg) {
+            TurboToast.showMsg(activity, errorMsg);
+        }
+    }
+
+    /**
+     * 加载更多数据监听器
+     * 
+     * @author Ted
+     */
+    private class OnScrollL implements OnScrollListener {
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            if (isScrollEnd(view, loadingFooter.getView())) {
+                loadData(new LoadMoreDoMainNetCallBack());
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem,
+                int visibleItemCount, int totalItemCount) {
+        }
+
+        /**
+         * 判断ScrollView是否滚动到最底部（以targetView为参考） 判断是滚动到底部
+         * 
+         * @param view
+         * @param targetView
+         * @return
+         */
+        private boolean isScrollEnd(AbsListView view, View targetView) {
+            boolean scrollEnd = false;
+            try {
+                if (view.getPositionForView(targetView) == view
+                        .getLastVisiblePosition())
+                    scrollEnd = true;
+            } catch (Exception e) {
+                scrollEnd = false;
+            }
+            return scrollEnd;
+        }
+    }
+
+    /**
+     * 打开关闭DockMenu的监听器
+     * 
+     * @author Ted
+     */
+    private class DockMenuL implements OtherTouchListener {
+        float y1 = 0;
+        float y2 = 0;
+        float Ydelta = 0;
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                y1 = event.getY();
+            }
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                y2 = event.getY();
+                Ydelta = y2 - y1;
+                if (Ydelta > 10) {
+                    // 向下滑动时，显示DockMenu
+                    dockViewHelper.showDockMenu();
+                } else if (Ydelta < -10) {
+                    // 向上滑动时，因此DockMenu
+                    dockViewHelper.closeDockMenu();
+                }
+            }
+            return true;
+        }
+    }
 }

@@ -1,15 +1,5 @@
 package com.yueyouai.app.ui;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,10 +12,20 @@ import android.widget.ImageView;
 
 import com.turbo.data.SharedPerferencesHelper;
 import com.turbo.net.VolleyNetHelper.NetCallBack;
+import com.turbo.net.impl.TurboJSONResponse;
 import com.turbo.view.TurboLoadingDialog;
 import com.yueyouai.app.App;
 import com.yueyouai.app.R;
 import com.yueyouai.app.data.Constant;
+
+import org.apache.http.ParseException;
+import org.apache.http.cookie.Cookie;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SplashActivity extends Activity {
 	
@@ -73,12 +73,7 @@ public class SplashActivity extends Activity {
 			final Map<String, String> map = new HashMap<String, String>();
 			map.put("username", userName);
 			map.put("psw", password);
-			new Thread() {
-				public void run() {
-					App.getNetHellper().doSyncBasePost(Constant.URL_LOGIN, map,
-							new DoLoginCallBack());
-				};
-			}.start();
+			App.getNetHellper().doTurboJSONPost(Constant.URL_LOGIN, map,null, new DoLoginCallBack());
 		}
 	}
 	
@@ -88,7 +83,7 @@ public class SplashActivity extends Activity {
 	 * 
 	 * @author Ted
 	 */
-	private class DoLoginCallBack implements NetCallBack<HttpResponse> {
+	private class DoLoginCallBack implements NetCallBack<TurboJSONResponse> {
 		@Override
 		public void onError(String errorMsg) {
 			TurboLoadingDialog.endLoading();
@@ -100,14 +95,19 @@ public class SplashActivity extends Activity {
 		}
 
 		@Override
-		public void onSuccess(HttpResponse resp) {
+		public void onSuccess(TurboJSONResponse jsonResp) {
 			try {
-				String jsonStr = EntityUtils.toString(resp.getEntity());
-				JSONObject obj = new JSONObject(jsonStr);
+			    JSONObject obj = jsonResp.take();
 				final int status = obj.getInt("status");
 				if(status == Constant.RESPONSE_STATUS_SUCCESS){
 					//登录成功后保存Cookie
-					SharedPerferencesHelper.newInstance().writeString(Constant.COOKIE, resp.getHeaders(Constant.COOKIE).toString());
+				    List<Cookie> cookies = jsonResp.getCookies();
+				    for(Cookie cookie : cookies){
+				        if(Constant.COOKIE.equals(cookie.getName())){
+				            SharedPerferencesHelper.newInstance().writeString(Constant.COOKIE, cookie.getValue());
+				            break;
+				        }
+				    }
 					//进入应用首页
 					Intent intent = new Intent();
 					intent.setClass(activity, MainActivity.class);
@@ -115,7 +115,7 @@ public class SplashActivity extends Activity {
 					startActivity(intent);
 					activity.finish();
 				}else{
-					//自动登录失败，启动登录页
+					//自动登录失败，跳转到登录页
 					Intent intent = new Intent();
 					intent.setClass(activity, LoginActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -125,8 +125,6 @@ public class SplashActivity extends Activity {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			} catch (ParseException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
