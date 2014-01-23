@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.yueyouai.app.data.IdeaDetailBean;
+import com.yueyouai.app.data.AllDataBean;
 
 import java.util.List;
 
@@ -18,9 +18,9 @@ public class IdeaDetailAdapter extends BaseAdapter{
 
 	private LayoutInflater inflater;
 	private Context context;
-	private List<IdeaDetailBean> datas;
+	private List<AllDataBean> datas;
 	
-	public IdeaDetailAdapter(Context context, List<IdeaDetailBean> datas){
+	public IdeaDetailAdapter(Context context, List<AllDataBean> datas){
 		this.context = context;
 		this.datas = datas;
 		this.inflater = LayoutInflater.from(context);

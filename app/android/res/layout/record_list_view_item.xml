@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <LinearLayout
+        android:id="@+id/record_list_item_content_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/record_list_item_textView"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="36dp"
+            android:layout_marginTop="36dp"
+            android:gravity="center"
+            android:textSize="@dimen/text_detail_size"
+            android:text="记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情记录详情"
+            />
+        
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <!-- 时间 -->
+            <TextView
+                android:id="@+id/record_list_item_dateText"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="20dp" 
+                android:text="2014-01-23"
+                android:gravity="center"
+				android:layout_centerVertical="true"
+				android:layout_alignParentLeft="true"                
+                android:background="@android:color/white"
+                />
+            
+            <!-- 回复按钮 -->
+            <Button
+                android:id="@+id/record_list_item_commentBtn"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="评论"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:layout_centerVertical="true" 
+                />
+            
+            <!-- 赞按钮 -->
+            <Button
+                android:id="@+id/record_list_item_praiseBtn"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="赞"
+                android:layout_toLeftOf="@id/record_list_item_commentBtn"
+                android:layout_marginRight="8dp"
+                android:layout_centerVertical="true" 
+                />
+            
+            
+        </RelativeLayout>
+    </LinearLayout>
+    
+    <!-- 用户头像 -->
+	<com.turbo.volley.toolbox.NetworkImageView
+	    android:id="@+id/record_list_item_user_photo"
+	    android:layout_height="wrap_content"
+	    android:layout_width="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_alignParentTop="true"
+	    android:maxWidth="72dp"
+	    android:maxHeight="72dp"
+	    android:background="@drawable/ic_launcher"
+	    />    
+
+</RelativeLayout>

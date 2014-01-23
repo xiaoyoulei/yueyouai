@@ -7,13 +7,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * 点子相关
+ * 数据总表，根据type判断是哪个类型的数据
  * @author Ted
  *
  */
-public class IdeaDetailBean {
-	private int id;
-	private int type;	//2/3 (事件，点评) 
+public class AllDataBean {
+	private int id;         //数据的ID（点子/评论/记录）
+	private int type;	    //2/3 (事件，点评) 
 	private String title;
 	private String desc;
 	private String[] pic = new String[]{};
@@ -63,12 +63,12 @@ public class IdeaDetailBean {
 	 * @param jsonStr
 	 * @return
 	 */
-	public static ArrayList<IdeaDetailBean> parse(String jsonStr){
-		ArrayList<IdeaDetailBean> datas = null;
+	public static ArrayList<AllDataBean> parse(String jsonStr){
+		ArrayList<AllDataBean> datas = null;
 		try {
 			JSONObject obj = new JSONObject(jsonStr);
 			if(!obj.has("data")) return null;
-			datas = new ArrayList<IdeaDetailBean>();
+			datas = new ArrayList<AllDataBean>();
 			JSONArray array = obj.getJSONArray("data");
 			for (int i = 0; i < array.length(); i++) {
 				JSONObject tempObj = (JSONObject) array.get(i);
@@ -85,15 +85,15 @@ public class IdeaDetailBean {
 	 * @param obj
 	 * @return
 	 */
-	private static IdeaDetailBean parseBean(JSONObject obj){
-		IdeaDetailBean bean = null;
+	private static AllDataBean parseBean(JSONObject obj){
+		AllDataBean bean = null;
 		try {
 			if(!obj.has("id")) return null;
 			if(!obj.has("type")) return null;
 			if(!obj.has("title")) return null;
 			if(!obj.has("desc")) return null;
 			if(!obj.has("pic")) return null;
-			bean = new IdeaDetailBean();
+			bean = new AllDataBean();
 			bean.setId(obj.getInt("id"));
 			bean.setType(obj.getInt("type"));
 			bean.setTitle(obj.getString("title"));

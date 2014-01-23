@@ -56,6 +56,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
+			
+            <!-- 使用滑动块来表述 -->
+            <android.support.v4.view.ViewPager
+                android:id="@+id/all_data_view_viewPager"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1.0"
+                android:background="#000000"
+                android:flipInterval="30"
+                android:persistentDrawingCache="animation" />
+
             <ListView
                 android:id="@+id/msg_detail_comment_list_view"
                 android:layout_width="match_parent"
@@ -69,10 +81,9 @@
         android:id="@+id/msg_detail_view_bottom_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom" 
-        >
+        android:orientation="horizontal" >
 
         <ScrollView
             android:layout_width="wrap_content"
@@ -82,17 +93,16 @@
                 android:id="@+id/msg_detail_view_comment_editText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:maxHeight="100dp"
-                android:minWidth="200dp"
-                android:layout_weight="1" />
+                android:minWidth="200dp" />
         </ScrollView>
-	        
-        <Button 
+
+        <Button
             android:id="@+id/msg_detail_view_sendComment_btn"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:background="@drawable/ic_launcher"
-            />
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_launcher" />
     </LinearLayout>
 
 </FrameLayout>
